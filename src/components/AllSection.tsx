@@ -17,6 +17,8 @@ interface Props {
   onTally: (pid: string, mid: string, delta: number) => void
   onToggleShared: (mid: string) => void
   onAutoComplete: (pid: string) => void
+  onCompleteTally: (pid: string, mid: string) => void
+  onTogglePin: (pid: string) => void
   onDelete: (pid: string) => void
 }
 
@@ -28,10 +30,10 @@ function matches(p: Program, q: string) {
 
 export function AllSection({
   wbc, ta, f1, player, other, shared, searchQ,
-  onToggle, onTally, onToggleShared, onAutoComplete, onDelete,
+  onToggle, onTally, onToggleShared, onAutoComplete, onCompleteTally, onTogglePin, onDelete,
 }: Props) {
   const q = searchQ.toLowerCase().trim()
-  const handlers = { onToggle, onTally, onToggleShared, onAutoComplete, onDelete }
+  const handlers = { onToggle, onTally, onToggleShared, onAutoComplete, onCompleteTally, onTogglePin, onDelete }
 
   const wbcShow = sortByCompletion(wbc.filter(p => matches(p, q)), shared)
   const allTA = [
@@ -55,7 +57,47 @@ export function AllSection({
 
   return (
     <div>
-      {q && (
+      {/* ── Pinned programs (always at top) ── */}
+      {!q && (() => {
+        const allProgs = [...wbc, ...ta, ...f1, ...player, ...other]
+        const pinnedProgs = allProgs.filter(p => p.pinned)
+        if (!pinnedProgs.length) return null
+        return (
+          <>
+            <SectionLabel pinned>📌 Pinned</SectionLabel>
+            <div className="flex flex-col gap-2 mb-4">
+              {pinnedProgs.map(p => {
+                const isWbc = wbc.some(w => w.id === p.id)
+                const isTa = ta.some(t => t.id === p.id)
+                const f1p = f1.find(f => f.teamId === p.id)
+                if (isTa) {
+                  return (
+                    <TeamGroup
+                      key={p.id}
+                      ta={p}
+                      f1={f1.find(f => f.teamId === p.id)}
+                      shared={shared}
+                      {...handlers}
+                    />
+                  )
+                }
+                // f1 program — show as standalone card
+                return (
+                  <ProgramCard
+                    key={p.id}
+                    program={p}
+                    shared={shared}
+                    isWbc={isWbc}
+                    {...handlers}
+                  />
+                )
+              })}
+            </div>
+          </>
+        )
+      })()}
+
+            {q && (
         <div className="text-[11px] text-white/40 mb-3 px-0.5">
           {hasAny
             ? <>Found <strong className="text-blue-400">{totalHits}</strong> result{totalHits !== 1 ? 's' : ''} for &ldquo;<strong className="text-white/70">{q}</strong>&rdquo;</>
@@ -132,10 +174,10 @@ export function AllSection({
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 my-3">
-      <span className="font-display font-bold text-[11px] uppercase tracking-[0.1em] text-white/30">
+      <span className="font-display font-bold text-[11px] uppercase tracking-[0.1em]" style={{ color: "rgba(240,180,41,0.45)" }}>
         {children}
       </span>
-      <div className="flex-1 h-px bg-white/[0.07]" />
+      <div className="flex-1 h-px" style={{ background: "rgba(240,180,41,0.1)" }} />
     </div>
   )
 }

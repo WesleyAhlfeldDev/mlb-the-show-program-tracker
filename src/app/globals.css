@@ -3,40 +3,68 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0d0f12;
-  --bg2: #13161b;
-  --bg3: #1a1e25;
-  --bg4: #222730;
+  --bg:    #080c14;
+  --bg2:   #0d1424;
+  --bg3:   #141d30;
+  --bg4:   #1c2840;
+  --gold:  #f0b429;
+  --gold2: #ffd166;
+  --gold3: #c8901a;
+  --navy:  #0d1424;
 }
 
-html {
-  background: var(--bg);
-}
+html { background: var(--bg); }
 
 body {
   background: var(--bg);
-  color: #e8eaf0;
+  color: #e8edf8;
   min-height: 100vh;
 }
 
-/* Scrollbar */
+/* Scrollbars */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #333a47; }
-
-/* Hide scrollbar for tab bar */
+::-webkit-scrollbar-thumb:hover { background: #2a3a58; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
 
-/* Slide-up animation for toasts */
+/* Gold glow utility */
+.glow-gold {
+  box-shadow: 0 0 24px rgba(240, 180, 41, 0.18), 0 0 8px rgba(240, 180, 41, 0.1);
+}
+.glow-gold-sm {
+  box-shadow: 0 0 10px rgba(240, 180, 41, 0.15);
+}
+
+/* Header gradient line */
+.header-line {
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  height: 1px;
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #ffd166 0%, #f0b429 50%, #c8901a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Completed stripe */
+.completed-stripe-gold {
+  background: linear-gradient(90deg, #c8901a, #f0b429, #ffd166, #f0b429, #c8901a);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Toast slide up */
 @keyframes slideup {
   from { transform: translateY(20px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
-}
-
-/* Animate in program cards */
-@keyframes fadein {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
 }

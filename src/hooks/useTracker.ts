@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import type { Program, SharedMission, Mission, ActiveTab, TrackerState } from '@/types'
+import type { Program, SharedMission, Mission, Section, ActiveTab, TrackerState } from '@/types'
 import {
   WBC_DEF, TA_DEF, F1_DEF, PLAYER_DEF, OTHER_DEF, SHARED_MISSIONS_DEFAULT
 } from '@/data'
@@ -45,13 +45,69 @@ function loadState(): TrackerState {
   }
 }
 
+// ── Pure immutable helpers ────────────────────────────────────────────────────
+
+function updateMissionInSection(sec: Section, mid: string, updater: (m: Mission) => Mission): Section {
+  const idx = sec.missions.findIndex(m => m.id === mid)
+  if (idx === -1) return sec
+  const missions = [...sec.missions]
+  missions[idx] = updater({ ...missions[idx] })
+  return { ...sec, missions }
+}
+
+function updateMissionInProgram(prog: Program, mid: string, updater: (m: Mission) => Mission): Program {
+  let found = false
+  const sections = prog.sections.map(sec => {
+    if (found) return sec
+    const updated = updateMissionInSection(sec, mid, updater)
+    if (updated !== sec) found = true
+    return updated
+  })
+  return found ? { ...prog, sections } : prog
+}
+
+function updateProgramInArray(arr: Program[], pid: string, updater: (p: Program) => Program): Program[] {
+  return arr.map(p => p.id === pid ? updater({ ...p }) : p)
+}
+
+function updateProgInState(s: TrackerState, pid: string, updater: (p: Program) => Program): TrackerState {
+  if (s.wbc.some(p => p.id === pid))
+    return { ...s, wbc: updateProgramInArray(s.wbc, pid, updater) }
+  if (s.ta.some(p => p.id === pid))
+    return { ...s, ta: updateProgramInArray(s.ta, pid, updater) }
+  if (s.f1.some(p => p.id === pid))
+    return { ...s, f1: updateProgramInArray(s.f1, pid, updater) }
+  if (s.moonshot.some(p => p.id === pid))
+    return { ...s, moonshot: updateProgramInArray(s.moonshot, pid, updater) }
+  if (s.player.some(p => p.id === pid))
+    return { ...s, player: updateProgramInArray(s.player, pid, updater) }
+  if (s.other.some(p => p.id === pid))
+    return { ...s, other: updateProgramInArray(s.other, pid, updater) }
+  return s
+}
+
+function completeAllMissions(p: Program): Program {
+  return {
+    ...p,
+    sections: p.sections.map(sec => ({
+      ...sec,
+      missions: sec.missions.map(m => {
+        if (m.type === 'tally') return { ...m, current: m.target, done: true }
+        if (m.type === 'check') return { ...m, done: true }
+        return m
+      }),
+    })),
+  }
+}
+
 // ── Calc helpers ──────────────────────────────────────────────────────────────
 export function pct(p: Program, shared: SharedMission[] = []): number {
   const nonRep = (ms: Mission[]) => ms.filter(m => m.type !== 'rep')
+  const withShared = p.tab === 'wbc' && p.id !== 'wbc-moonshot'
   const total = p.sections.reduce((a, s) => a + nonRep(s.missions).length, 0)
-    + (p.tab === 'wbc' && p.id !== 'wbc-moonshot' ? shared.length : 0)
+    + (withShared ? shared.length : 0)
   const done = p.sections.reduce((a, s) => a + nonRep(s.missions).filter(m => m.done).length, 0)
-    + (p.tab === 'wbc' && p.id !== 'wbc-moonshot' ? shared.filter(m => m.done).length : 0)
+    + (withShared ? shared.filter(m => m.done).length : 0)
   return total ? Math.round((done / total) * 100) : 0
 }
 
@@ -65,12 +121,21 @@ export function missionCounts(p: Program, shared: SharedMission[] = []) {
   return { done, total }
 }
 
+// Sort: pinned first → in-progress → completed
 export function sortByCompletion(arr: Program[], shared: SharedMission[]): Program[] {
   return [...arr].sort((a, b) => {
+    const ap = a.pinned ?? false
+    const bp = b.pinned ?? false
     const ad = pct(a, shared) === 100
     const bd = pct(b, shared) === 100
-    if (ad === bd) return 0
-    return ad ? 1 : -1
+
+    // Pinned always float to top (even if completed)
+    if (ap && !bp) return -1
+    if (!ap && bp) return 1
+    // Within same pin group: completed go to bottom
+    if (ad && !bd) return 1
+    if (!ad && bd) return -1
+    return 0
   })
 }
 
@@ -79,18 +144,14 @@ export function useTracker() {
   const [state, setState] = useState<TrackerState>(initState)
   const [hydrated, setHydrated] = useState(false)
 
-  // Load from localStorage on mount
   useEffect(() => {
     setState(loadState())
     setHydrated(true)
   }, [])
 
-  // Save to localStorage on every state change (after hydration)
   useEffect(() => {
     if (!hydrated) return
-    try {
-      localStorage.setItem(SK, JSON.stringify(state))
-    } catch {}
+    try { localStorage.setItem(SK, JSON.stringify(state)) } catch {}
   }, [state, hydrated])
 
   const allPrograms = useCallback(() =>
@@ -98,66 +159,65 @@ export function useTracker() {
     [state]
   )
 
-  // ── Tab ────────────────────────────────────────────────────────────────────
   const setCat = useCallback((cat: ActiveTab) => {
     setState(s => ({ ...s, cat }))
   }, [])
 
-  // ── Toggle mission checkbox ────────────────────────────────────────────────
   const toggleCheck = useCallback((pid: string, mid: string) => {
-    setState(s => {
-      const arr = getAllArray(s)
-      const prog = arr.find(p => p.id === pid)
-      if (!prog) return s
-      for (const sec of prog.sections) {
-        const m = sec.missions.find(m => m.id === mid)
-        if (m) { m.done = !m.done; break }
-      }
-      return { ...s, ...rebuildArrays(s, arr) }
-    })
+    setState(s =>
+      updateProgInState(s, pid, p =>
+        updateMissionInProgram(p, mid, m => ({ ...m, done: !m.done }))
+      )
+    )
   }, [])
 
-  // ── Tally ──────────────────────────────────────────────────────────────────
   const tally = useCallback((pid: string, mid: string, delta: number) => {
-    setState(s => {
-      const arr = getAllArray(s)
-      const prog = arr.find(p => p.id === pid)
-      if (!prog) return s
-      for (const sec of prog.sections) {
-        const m = sec.missions.find(m => m.id === mid)
-        if (m) {
-          m.current = Math.max(0, Math.min((m.current ?? 0) + delta, m.target))
-          m.done = m.current >= m.target
-          break
-        }
-      }
-      return { ...s, ...rebuildArrays(s, arr) }
-    })
+    setState(s =>
+      updateProgInState(s, pid, p =>
+        updateMissionInProgram(p, mid, m => {
+          const next = Math.max(0, Math.min((m.current ?? 0) + delta, m.target))
+          return { ...m, current: next, done: next >= m.target }
+        })
+      )
+    )
   }, [])
 
-  // ── Toggle shared mission ──────────────────────────────────────────────────
+  const completeTally = useCallback((pid: string, mid: string) => {
+    setState(s =>
+      updateProgInState(s, pid, p =>
+        updateMissionInProgram(p, mid, m => {
+          const nowDone = !m.done
+          return { ...m, current: nowDone ? m.target : 0, done: nowDone }
+        })
+      )
+    )
+  }, [])
+
   const toggleShared = useCallback((mid: string) => {
-    setState(s => {
-      const shared = s.shared.map(m => m.id === mid ? { ...m, done: !m.done } : m)
-      return { ...s, shared }
-    })
+    setState(s => ({
+      ...s,
+      shared: s.shared.map(m => m.id === mid ? { ...m, done: !m.done } : m),
+    }))
   }, [])
 
-  // ── Auto-complete ──────────────────────────────────────────────────────────
   const autoComplete = useCallback((pid: string) => {
     setState(s => {
-      const arr = getAllArray(s)
-      const prog = arr.find(p => p.id === pid)
-      if (!prog) return s
-      prog.sections.forEach(sec => sec.missions.forEach(m => {
-        if (m.type === 'tally') { m.current = m.target; m.done = true }
-        else if (m.type === 'check') { m.done = true }
-      }))
-      return { ...s, ...rebuildArrays(s, arr) }
+      let next = updateProgInState(s, pid, completeAllMissions)
+      const isWbcPool = s.wbc.some(p => p.id === pid && p.id !== 'wbc-moonshot')
+      if (isWbcPool) {
+        next = { ...next, shared: next.shared.map(m => ({ ...m, done: true })) }
+      }
+      return next
     })
   }, [])
 
-  // ── Delete ─────────────────────────────────────────────────────────────────
+  // Toggle pinned state
+  const togglePin = useCallback((pid: string) => {
+    setState(s =>
+      updateProgInState(s, pid, p => ({ ...p, pinned: !p.pinned }))
+    )
+  }, [])
+
   const deleteProgram = useCallback((pid: string) => {
     setState(s => ({
       ...s,
@@ -169,7 +229,6 @@ export function useTracker() {
     }))
   }, [])
 
-  // ── Export / Import ────────────────────────────────────────────────────────
   const exportAll = useCallback(() => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
     const a = document.createElement('a')
@@ -196,11 +255,10 @@ export function useTracker() {
     }
   }, [])
 
-  // ── Stats ──────────────────────────────────────────────────────────────────
   const stats = useCallback(() => {
     const all = allPrograms()
     const done = all.filter(p => pct(p, state.shared) === 100).length
-    const wbcMs = [...state.wbc].reduce((a, p) => {
+    const wbcMs = state.wbc.reduce((a, p) => {
       const { done: d, total: t } = missionCounts(p, state.shared)
       return { done: a.done + d, total: a.total + t }
     }, { done: 0, total: 0 })
@@ -209,29 +267,16 @@ export function useTracker() {
       return { done: a.done + d, total: a.total + t }
     }, { done: 0, total: 0 })
     const talliesDone = all.reduce((a, p) =>
-      a + p.sections.reduce((b, s) => b + s.missions.filter(m => m.type === 'tally' && m.done).length, 0), 0)
+      a + p.sections.reduce((b, s) =>
+        b + s.missions.filter(m => m.type === 'tally' && m.done).length, 0), 0)
     return { done, total: all.length, wbcMs, taMs, talliesDone }
   }, [allPrograms, state])
 
   return {
-    state, hydrated, setCat, toggleCheck, tally, toggleShared,
-    autoComplete, deleteProgram, exportAll, importBackup, stats, allPrograms,
-  }
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function getAllArray(s: TrackerState): Program[] {
-  return [...s.wbc, ...s.ta, ...s.f1, ...s.moonshot, ...s.player, ...s.other]
-}
-
-function rebuildArrays(s: TrackerState, all: Program[]): Partial<TrackerState> {
-  const byId = new Map(all.map(p => [p.id, p]))
-  return {
-    wbc: s.wbc.map(p => byId.get(p.id) ?? p),
-    ta: s.ta.map(p => byId.get(p.id) ?? p),
-    f1: s.f1.map(p => byId.get(p.id) ?? p),
-    moonshot: s.moonshot.map(p => byId.get(p.id) ?? p),
-    player: s.player.map(p => byId.get(p.id) ?? p),
-    other: s.other.map(p => byId.get(p.id) ?? p),
+    state, hydrated, setCat,
+    toggleCheck, tally, completeTally,
+    toggleShared, autoComplete, togglePin,
+    deleteProgram, exportAll, importBackup,
+    stats, allPrograms,
   }
 }

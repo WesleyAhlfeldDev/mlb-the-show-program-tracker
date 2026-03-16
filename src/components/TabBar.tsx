@@ -2,37 +2,63 @@
 import type { ActiveTab } from '@/types'
 
 const TABS: { id: ActiveTab; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'wbc', label: 'WBC' },
-  { id: 'ta', label: 'Team Affinity' },
+  { id: 'all',    label: 'All' },
+  { id: 'pinned', label: '📌 Pinned' },
+  { id: 'wbc',    label: 'WBC' },
+  { id: 'ta',     label: 'Team Affinity' },
   { id: 'player', label: 'Player' },
-  { id: 'other', label: 'Other' },
+  { id: 'other',  label: 'Other' },
 ]
 
 interface Props {
   active: ActiveTab
   onChange: (tab: ActiveTab) => void
+  pinnedCount: number
 }
 
-export function TabBar({ active, onChange }: Props) {
+export function TabBar({ active, onChange, pinnedCount }: Props) {
   return (
     <div className="sticky top-[58px] z-40 mb-4">
-      <div className="flex gap-1 bg-bg2 border border-white/[0.07] rounded-xl p-1.5 overflow-x-auto scrollbar-none">
-        {TABS.map(t => (
-          <button
-            key={t.id}
-            onClick={() => onChange(t.id)}
-            className={[
-              'font-display font-bold text-[13px] uppercase tracking-[0.06em] whitespace-nowrap',
-              'px-5 py-2 rounded-[6px] transition-colors duration-150 flex-shrink-0',
-              active === t.id
-                ? 'bg-blue-500 text-white'
-                : 'text-white/50 hover:bg-bg3 hover:text-white'
-            ].join(' ')}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div
+        className="flex gap-1 rounded-xl p-1.5 overflow-x-auto scrollbar-none border"
+        style={{
+          background: 'linear-gradient(135deg, #0d1424 0%, #141d30 100%)',
+          borderColor: 'rgba(240,180,41,0.15)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+        }}
+      >
+        {TABS.map(t => {
+          const isActive = active === t.id
+          const isPinnedTab = t.id === 'pinned'
+          return (
+            <button
+              key={t.id}
+              onClick={() => onChange(t.id)}
+              className={[
+                'font-display font-bold text-[13px] uppercase tracking-[0.06em] whitespace-nowrap',
+                'px-5 py-2 rounded-[6px] transition-all duration-200 flex-shrink-0 flex items-center gap-1.5',
+                isActive ? 'text-bg font-black' : 'text-white/40 hover:text-white/80 hover:bg-white/5',
+              ].join(' ')}
+              style={isActive ? {
+                background: 'linear-gradient(135deg, #ffd166 0%, #f0b429 50%, #c8901a 100%)',
+                boxShadow: '0 0 16px rgba(240,180,41,0.4), 0 2px 8px rgba(0,0,0,0.3)',
+              } : {}}
+            >
+              {t.label}
+              {isPinnedTab && pinnedCount > 0 && (
+                <span
+                  className="text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none"
+                  style={isActive
+                    ? { background: 'rgba(0,0,0,0.2)', color: '#080c14' }
+                    : { background: 'rgba(240,180,41,0.2)', color: '#f0b429' }
+                  }
+                >
+                  {pinnedCount}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
     </div>
   )

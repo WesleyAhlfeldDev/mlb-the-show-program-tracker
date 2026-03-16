@@ -11,16 +11,20 @@ interface Props {
   shared: SharedMission[]
   onToggle: (pid: string, mid: string) => void
   onTally: (pid: string, mid: string, delta: number) => void
+  onCompleteTally: (pid: string, mid: string) => void
   onToggleShared: (mid: string) => void
   onAutoComplete: (pid: string) => void
+  onTogglePin: (pid: string) => void
   onDelete: (pid: string) => void
 }
 
-export function TASection({ ta, f1, shared, onToggle, onTally, onToggleShared, onAutoComplete, onDelete }: Props) {
-  const [filter, setFilter] = useState<string>('all')
-  const handlers = { onToggle, onTally, onToggleShared, onAutoComplete, onDelete }
+const goldBtn = { background: 'linear-gradient(135deg,#ffd166,#f0b429)', color: '#080c14', border: '1px solid transparent', fontWeight: 700 }
+const dimBtn  = { borderColor: 'rgba(255,255,255,0.13)', color: 'rgba(255,255,255,0.4)' }
 
-  // Sort teams within their group by completion
+export function TASection({ ta, f1, shared, onToggle, onTally, onCompleteTally, onToggleShared, onAutoComplete, onTogglePin, onDelete }: Props) {
+  const [filter, setFilter] = useState<string>('all')
+  const handlers = { onToggle, onTally, onCompleteTally, onToggleShared, onAutoComplete, onTogglePin, onDelete }
+
   const alTeams = sortByCompletion(ta.filter(p => AL_IDS.includes(p.id)), shared)
   const nlTeams = sortByCompletion(ta.filter(p => NL_IDS.includes(p.id)), shared)
   const customTeams = sortByCompletion(ta.filter(p => !AL_IDS.includes(p.id) && !NL_IDS.includes(p.id)), shared)
@@ -41,57 +45,62 @@ export function TASection({ ta, f1, shared, onToggle, onTally, onToggleShared, o
 
   return (
     <div>
-      <div className="bg-blue-500/10 border border-blue-500/25 rounded-[6px] px-3.5 py-2.5 text-[12px] text-blue-300 mb-4 leading-relaxed">
+      <div
+        className="rounded-[6px] px-3.5 py-2.5 text-[12px] mb-4 leading-relaxed"
+        style={{ background: 'rgba(240,180,41,0.06)', border: '1px solid rgba(240,180,41,0.15)', color: 'rgba(240,180,41,0.85)' }}
+      >
         🏆 Complete <strong>2 Moments</strong> + <strong>8 Stat Missions</strong> per team to earn 4 player cards including two{' '}
         <strong>Jolt Series Captains (88 OVR)</strong>.
       </div>
 
-      {/* Sub-filter */}
+      {/* Sub-filter pills */}
       <div className="flex gap-1.5 flex-wrap mb-4 text-[11px]">
         <button
+          type="button"
           onClick={() => setFilter('all')}
-          className={`font-medium px-3 py-1.5 rounded-full border transition-colors ${filter === 'all' ? 'bg-white text-bg border-white' : 'border-white/[0.13] text-white/50 hover:text-white hover:bg-bg3'}`}
+          className="font-medium px-3 py-1.5 rounded-full border transition-all"
+          style={filter === 'all' ? goldBtn : dimBtn}
         >
           All 30
         </button>
-        <span className="text-white/30 self-center px-1">AL:</span>
+
+        <span className="self-center px-1" style={{ color: 'rgba(240,180,41,0.35)' }}>AL:</span>
         {ta.filter(p => AL_IDS.includes(p.id)).map(p => {
           const pc = pct(p, shared)
-          const short = TEAM_SHORT[p.name] ?? p.name
           return (
             <button
               key={p.id}
+              type="button"
               onClick={() => setFilter(p.id)}
-              className={`font-medium px-3 py-1.5 rounded-full border transition-colors ${filter === p.id ? 'bg-white text-bg border-white' : 'border-white/[0.13] text-white/50 hover:text-white hover:bg-bg3'}`}
+              className="font-medium px-3 py-1.5 rounded-full border transition-all"
+              style={filter === p.id ? goldBtn : dimBtn}
             >
-              {short} {pc === 100 ? '✓' : `${pc}%`}
+              {TEAM_SHORT[p.name] ?? p.name} {pc === 100 ? '✓' : `${pc}%`}
             </button>
           )
         })}
-        <span className="text-white/30 self-center px-1">NL:</span>
+
+        <span className="self-center px-1" style={{ color: 'rgba(240,180,41,0.35)' }}>NL:</span>
         {ta.filter(p => NL_IDS.includes(p.id)).map(p => {
           const pc = pct(p, shared)
-          const short = TEAM_SHORT[p.name] ?? p.name
           return (
             <button
               key={p.id}
+              type="button"
               onClick={() => setFilter(p.id)}
-              className={`font-medium px-3 py-1.5 rounded-full border transition-colors ${filter === p.id ? 'bg-white text-bg border-white' : 'border-white/[0.13] text-white/50 hover:text-white hover:bg-bg3'}`}
+              className="font-medium px-3 py-1.5 rounded-full border transition-all"
+              style={filter === p.id ? goldBtn : dimBtn}
             >
-              {short} {pc === 100 ? '✓' : `${pc}%`}
+              {TEAM_SHORT[p.name] ?? p.name} {pc === 100 ? '✓' : `${pc}%`}
             </button>
           )
         })}
       </div>
 
-      {alTeams.length > 0 && filter === 'all' && (
-        <SectionLabel>American League</SectionLabel>
-      )}
+      {alTeams.length > 0 && filter === 'all' && <SectionLabel>American League</SectionLabel>}
       {renderGroup(alTeams)}
 
-      {nlTeams.length > 0 && filter === 'all' && (
-        <SectionLabel>National League</SectionLabel>
-      )}
+      {nlTeams.length > 0 && filter === 'all' && <SectionLabel>National League</SectionLabel>}
       {renderGroup(nlTeams)}
       {renderGroup(customTeams)}
     </div>
@@ -101,10 +110,13 @@ export function TASection({ ta, f1, shared, onToggle, onTally, onToggleShared, o
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 my-3">
-      <span className="font-display font-bold text-[11px] uppercase tracking-[0.1em] text-white/30">
+      <span
+        className="font-display font-bold text-[11px] uppercase tracking-[0.1em]"
+        style={{ color: 'rgba(240,180,41,0.45)' }}
+      >
         {children}
       </span>
-      <div className="flex-1 h-px bg-white/[0.07]" />
+      <div className="flex-1 h-px" style={{ background: 'rgba(240,180,41,0.1)' }} />
     </div>
   )
 }

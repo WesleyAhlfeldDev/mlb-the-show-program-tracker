@@ -9,29 +9,38 @@ interface Props {
   shared: SharedMission[]
   onToggle: (pid: string, mid: string) => void
   onTally: (pid: string, mid: string, delta: number) => void
+  onCompleteTally: (pid: string, mid: string) => void
   onToggleShared: (mid: string) => void
   onAutoComplete: (pid: string) => void
+  onTogglePin: (pid: string) => void
   onDelete: (pid: string) => void
 }
 
-export function WBCSection({ programs, shared, onToggle, onTally, onToggleShared, onAutoComplete, onDelete }: Props) {
+const goldBtn = { background: 'linear-gradient(135deg,#ffd166,#f0b429)', color: '#080c14', border: '1px solid transparent', fontWeight: 700 }
+const dimBtn  = { borderColor: 'rgba(255,255,255,0.13)', color: 'rgba(255,255,255,0.4)' }
+
+export function WBCSection({ programs, shared, onToggle, onTally, onCompleteTally, onToggleShared, onAutoComplete, onTogglePin, onDelete }: Props) {
   const [filter, setFilter] = useState<string>('all')
   const sorted = sortByCompletion(programs, shared)
   const shown = filter === 'all' ? sorted : sorted.filter(p => p.id === filter)
-  const handlers = { onToggle, onTally, onToggleShared, onAutoComplete, onDelete }
+  const handlers = { onToggle, onTally, onCompleteTally, onToggleShared, onAutoComplete, onTogglePin, onDelete }
 
   return (
     <div>
-      <div className="bg-blue-500/10 border border-blue-500/25 rounded-[6px] px-3.5 py-2.5 text-[12px] text-blue-300 mb-4 leading-relaxed">
+      <div
+        className="rounded-[6px] px-3.5 py-2.5 text-[12px] mb-4 leading-relaxed"
+        style={{ background: 'rgba(240,180,41,0.06)', border: '1px solid rgba(240,180,41,0.15)', color: 'rgba(240,180,41,0.85)' }}
+      >
         ⚡ <strong>Series Missions</strong> (IP, Ks, Hits, XBH, HR with any WBC cards) count toward{' '}
         <strong>all four pools simultaneously</strong>. Tap <strong>+</strong> to tally in real time.
       </div>
 
-      {/* Sub-filter tabs */}
       <div className="flex gap-1.5 flex-wrap mb-4">
         <button
+          type="button"
           onClick={() => setFilter('all')}
-          className={`text-[11px] font-medium px-3 py-1.5 rounded-full border transition-colors ${filter === 'all' ? 'bg-white text-bg border-white' : 'border-white/[0.13] text-white/50 hover:text-white hover:bg-bg3'}`}
+          className="text-[11px] font-medium px-3 py-1.5 rounded-full border transition-all"
+          style={filter === 'all' ? goldBtn : dimBtn}
         >
           All
         </button>
@@ -40,8 +49,10 @@ export function WBCSection({ programs, shared, onToggle, onTally, onToggleShared
           return (
             <button
               key={p.id}
+              type="button"
               onClick={() => setFilter(p.id)}
-              className={`text-[11px] font-medium px-3 py-1.5 rounded-full border transition-colors ${filter === p.id ? 'bg-white text-bg border-white' : 'border-white/[0.13] text-white/50 hover:text-white hover:bg-bg3'}`}
+              className="text-[11px] font-medium px-3 py-1.5 rounded-full border transition-all"
+              style={filter === p.id ? goldBtn : dimBtn}
             >
               {p.name} {pc === 100 ? '✓' : `${pc}%`}
             </button>
