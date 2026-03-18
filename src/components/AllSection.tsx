@@ -171,13 +171,16 @@ export function AllSection({
   )
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children, pinned }: { children: React.ReactNode; pinned?: boolean }) {
   return (
     <div className="flex items-center gap-3 my-3">
-      <span className="font-display font-bold text-[11px] uppercase tracking-[0.1em]" style={{ color: "rgba(240,180,41,0.45)" }}>
+      <span
+        className="font-display font-bold text-[11px] uppercase tracking-[0.1em]"
+        style={{ color: pinned ? "#f0b429" : "rgba(240,180,41,0.45)" }}
+      >
         {children}
       </span>
-      <div className="flex-1 h-px" style={{ background: "rgba(240,180,41,0.1)" }} />
+      <div className="flex-1 h-px" style={{ background: pinned ? "rgba(240,180,41,0.3)" : "rgba(240,180,41,0.1)" }} />
     </div>
   )
 }
