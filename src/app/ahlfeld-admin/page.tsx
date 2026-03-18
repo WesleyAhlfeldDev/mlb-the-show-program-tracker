@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 
-const ADMIN_PASSWORD = 'ahlfeld26'
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? ''
 const CUSTOM_KEY = 'mlb26_custom_v1'
 const STATE_KEY = 'mlb26_v12'
 
