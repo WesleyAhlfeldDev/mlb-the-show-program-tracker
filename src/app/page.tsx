@@ -76,7 +76,7 @@ export default function Home() {
     <>
       {/* ── Header ── */}
       <header
-        className="sticky top-0 z-50 px-4 md:px-6 flex items-center justify-between h-[58px]"
+        className="sticky top-0 z-50 px-3 md:px-6 flex items-center justify-between h-[56px]"
         style={{
           background: 'linear-gradient(135deg, #080c14 0%, #0d1424 100%)',
           borderBottom: '1px solid rgba(240,180,41,0.15)',
@@ -134,7 +134,7 @@ export default function Home() {
       </header>
 
       {/* ── Body ── */}
-      <main className="max-w-[980px] mx-auto px-4 md:px-6 pb-20 pt-6">
+      <main className="max-w-[980px] mx-auto px-3 md:px-6 pb-20 pt-4">
 
         {/* Device notice banner */}
         <div

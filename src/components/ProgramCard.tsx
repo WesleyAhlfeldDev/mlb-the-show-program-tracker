@@ -63,64 +63,54 @@ export function ProgramCard({
       {/* Header */}
       <div
         onClick={() => setExpanded(e => !e)}
-        className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none"
-        style={{
-          background: expanded && !done ? 'rgba(240,180,41,0.04)' : 'transparent',
-        }}
+        className="px-3 py-3 cursor-pointer select-none"
+        style={{ background: expanded && !done ? 'rgba(240,180,41,0.04)' : 'transparent' }}
       >
-        <div
-          className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-          style={{ background: p.color, boxShadow: `0 0 8px ${p.color}90` }}
-        />
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`font-display font-bold text-[14px] uppercase tracking-[0.04em] ${done && !pinned ? 'text-white/40' : 'text-white'}`}>
-              {p.name}
+        {/* Top row: dot + name + chevron */}
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+            style={{ background: p.color, boxShadow: `0 0 8px ${p.color}90` }}
+          />
+          <span className={`font-display font-bold text-[14px] uppercase tracking-[0.04em] flex-1 min-w-0 truncate ${done && !pinned ? 'text-white/40' : 'text-white'}`}>
+            {p.name}
+          </span>
+          {pinned && (
+            <span
+              className="text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] flex-shrink-0 hidden sm:inline"
+              style={{ background: 'rgba(240,180,41,0.15)', color: '#ffd166', border: '1px solid rgba(240,180,41,0.35)' }}
+            >
+              📌
             </span>
-            {pinned && (
-              <span
-                className="text-[10px] font-bold uppercase tracking-[0.06em] px-1.5 py-0.5 rounded-[4px]"
-                style={{ background: 'rgba(240,180,41,0.15)', color: '#ffd166', border: '1px solid rgba(240,180,41,0.35)' }}
-              >
-                📌 Pinned
-              </span>
-            )}
-          </div>
-          <div className="text-[12px] mt-0.5 font-medium" style={{ color: done ? 'rgba(200,215,235,0.35)' : 'rgba(200,215,235,0.65)' }}>
-            {p.category}
-            <span className="mx-1.5" style={{ color: 'rgba(200,215,235,0.3)' }}>·</span>
-            <span style={{ color: done ? 'rgba(200,215,235,0.35)' : 'rgba(200,215,235,0.5)' }}>
-              {dn}/{tot} missions
-            </span>
-          </div>
+          )}
+          <span
+            className="text-[11px] flex-shrink-0 transition-transform duration-200"
+            style={{ color: 'rgba(200,215,235,0.4)', transform: expanded ? 'rotate(180deg)' : 'none', display: 'inline-block' }}
+          >▼</span>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Second row: category + mission count */}
+        <div className="flex items-center gap-1.5 mt-1 ml-[18px]">
+          <span className="text-[12px] font-medium truncate flex-1 min-w-0" style={{ color: done ? 'rgba(200,215,235,0.3)' : 'rgba(200,215,235,0.6)' }}>
+            {p.category}
+          </span>
+          <span className="text-[11px] flex-shrink-0" style={{ color: 'rgba(200,215,235,0.4)' }}>
+            {dn}/{tot}
+          </span>
+        </div>
+
+        {/* Third row: action buttons */}
+        <div className="flex items-center gap-2 mt-2.5 ml-[18px]" onClick={e => e.stopPropagation()}>
           {/* Pin button */}
           <button
             type="button"
-            onClick={e => { e.stopPropagation(); onTogglePin(p.id) }}
+            onClick={() => onTogglePin(p.id)}
             title={pinned ? 'Unpin' : 'Pin to top'}
-            className="w-7 h-7 rounded-[6px] flex items-center justify-center text-[13px] transition-all"
+            className="w-8 h-8 rounded-[6px] flex items-center justify-center text-[13px] transition-all flex-shrink-0"
             style={pinned
               ? { background: 'rgba(240,180,41,0.2)', border: '1px solid rgba(240,180,41,0.45)', color: '#ffd166' }
               : { background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.3)' }
             }
-            onMouseEnter={e => {
-              if (!pinned) {
-                e.currentTarget.style.background = 'rgba(240,180,41,0.12)'
-                e.currentTarget.style.borderColor = 'rgba(240,180,41,0.4)'
-                e.currentTarget.style.color = '#ffd166'
-              }
-            }}
-            onMouseLeave={e => {
-              if (!pinned) {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
-                e.currentTarget.style.color = 'rgba(255,255,255,0.3)'
-              }
-            }}
           >
             📌
           </button>
@@ -129,11 +119,9 @@ export function ProgramCard({
           {!done && (
             <button
               type="button"
-              onClick={e => { e.stopPropagation(); onAutoComplete(p.id) }}
-              className="text-[11px] font-bold px-3 py-1.5 rounded-[6px] transition-all"
+              onClick={() => onAutoComplete(p.id)}
+              className="text-[12px] font-bold px-3 py-1.5 rounded-[6px] transition-all flex-shrink-0"
               style={{ background: 'rgba(240,180,41,0.12)', border: '1px solid rgba(240,180,41,0.35)', color: '#ffd166' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.22)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(240,180,41,0.3)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.12)'; e.currentTarget.style.boxShadow = 'none' }}
             >
               Complete
             </button>
@@ -141,7 +129,7 @@ export function ProgramCard({
 
           {/* % badge */}
           <span
-            className="font-display text-[12px] font-bold px-2.5 py-1 rounded-full min-w-[52px] text-center"
+            className="font-display text-[12px] font-bold px-2.5 py-1.5 rounded-full flex-shrink-0"
             style={done
               ? { background: 'rgba(34,197,94,0.15)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' }
               : { background: 'rgba(240,180,41,0.12)', color: '#ffd166', border: '1px solid rgba(240,180,41,0.3)' }
@@ -149,11 +137,6 @@ export function ProgramCard({
           >
             {done ? '✓ Done' : `${pc}%`}
           </span>
-
-          <span
-            className="text-[11px] transition-transform duration-200"
-            style={{ color: 'rgba(200,215,235,0.4)', transform: expanded ? 'rotate(180deg)' : 'none' }}
-          >▼</span>
         </div>
       </div>
 
@@ -164,7 +147,7 @@ export function ProgramCard({
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-4 pb-4">
+        <div className="px-3 pb-4">
           {p.sections.map((sec, si) => (
             <div key={si}>
               <div
@@ -193,11 +176,11 @@ export function ProgramCard({
 
           {p.boss && (
             <div
-              className="flex items-center gap-2.5 rounded-[8px] px-3.5 py-2.5 mt-4"
+              className="flex items-center gap-2.5 rounded-[8px] px-3 py-2.5 mt-4"
               style={{ background: 'rgba(240,180,41,0.07)', border: '1px solid rgba(240,180,41,0.2)' }}
             >
               <div className="w-3 h-3 rotate-45 rounded-sm flex-shrink-0" style={{ background: p.color }} />
-              <div>
+              <div className="min-w-0">
                 <div className="text-[10px] uppercase tracking-[0.07em] font-semibold" style={{ color: 'rgba(240,180,41,0.6)' }}>Reward card(s)</div>
                 <div className="text-[13px] font-semibold mt-0.5" style={{ color: '#e8edf8' }}>{p.boss}</div>
               </div>
