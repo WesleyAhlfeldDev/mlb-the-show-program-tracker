@@ -6,6 +6,7 @@ import {
 } from '@/data'
 
 const SK = 'mlb26_v12'
+const CUSTOM_KEY = 'mlb26_custom_v1'
 
 function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v))
@@ -42,6 +43,44 @@ function loadState(): TrackerState {
     }
   } catch {
     return initState()
+  }
+}
+
+// Merge any admin-added custom programs into state arrays
+function mergeCustomPrograms(state: TrackerState): TrackerState {
+  if (typeof window === 'undefined') return state
+  try {
+    const raw = localStorage.getItem(CUSTOM_KEY)
+    if (!raw) return state
+    const customs = JSON.parse(raw) as Program[]
+    if (!customs.length) return state
+
+    const buckets: Record<string, Program[]> = {
+      wbc: [...state.wbc],
+      ta: [...state.ta],
+      f1: [...state.f1],
+      player: [...state.player],
+      other: [...state.other],
+    }
+
+    for (const p of customs) {
+      const bucket = buckets[p.tab]
+      if (!bucket) continue
+      if (!bucket.some(existing => existing.id === p.id)) {
+        bucket.push(p)
+      }
+    }
+
+    return {
+      ...state,
+      wbc: buckets.wbc,
+      ta: buckets.ta,
+      f1: buckets.f1,
+      player: buckets.player,
+      other: buckets.other,
+    }
+  } catch {
+    return state
   }
 }
 
@@ -145,7 +184,7 @@ export function useTracker() {
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    setState(loadState())
+    setState(s => mergeCustomPrograms(loadState()) || s)
     setHydrated(true)
   }, [])
 
