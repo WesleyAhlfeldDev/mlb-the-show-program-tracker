@@ -190,8 +190,8 @@ export function MissionRow({ pid, mission: m, onToggle, onTally, onCompleteTally
     return (
       <div className="flex items-start gap-2.5 py-1.5 border-t first:border-t-0" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
         <div className="mt-0.5"><Checkbox checked={done} onClick={() => onToggle(pid, m.id)} /></div>
-        <span className={`flex-1 text-[13px] leading-snug ${done ? 'text-white/25 line-through' : 'text-white/80'}`}>{m.text}</span>
-        <span className="text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ color: '#f0b429' }}>+{m.xp.toLocaleString()} XP</span>
+        <span className={`flex-1 text-[13px] leading-snug ${done ? 'text-white/30 line-through' : 'text-white/90'}`}>{m.text}</span>
+        <span className="text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ color: '#ffd166' }}>+{m.xp.toLocaleString()} XP</span>
       </div>
     )
   }
@@ -201,10 +201,10 @@ export function MissionRow({ pid, mission: m, onToggle, onTally, onCompleteTally
       <div className="flex items-start gap-2.5 py-1.5 border-t first:border-t-0" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
         <div className="mt-0.5"><Checkbox checked={done} onClick={() => onToggle(pid, m.id)} /></div>
         <div className="flex-1 min-w-0">
-          <span className={`text-[13px] leading-snug ${done ? 'text-white/25 line-through' : 'text-white/80'}`}>{m.text}</span>
-          <div className="text-[10px] mt-0.5" style={{ color: '#f0b429' }}>↻ repeatable</div>
+          <span className={`text-[13px] leading-snug ${done ? 'text-white/30 line-through' : 'text-white/90'}`}>{m.text}</span>
+          <div className="text-[10px] mt-0.5" style={{ color: '#ffd166' }}>↻ repeatable</div>
         </div>
-        <span className="text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ color: '#f0b429' }}>+{m.xp.toLocaleString()} XP</span>
+        <span className="text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ color: '#ffd166' }}>+{m.xp.toLocaleString()} XP</span>
       </div>
     )
   }
@@ -215,7 +215,7 @@ export function MissionRow({ pid, mission: m, onToggle, onTally, onCompleteTally
       <Checkbox checked={done} onClick={() => onCompleteTally(pid, m.id)} />
 
       <div className="flex-1 min-w-0">
-        <div className={`text-[13px] leading-snug ${done ? 'text-white/25 line-through' : 'text-white/80'}`}>{m.text}</div>
+        <div className={`text-[13px] leading-snug ${done ? 'text-white/30 line-through' : 'text-white/90'}`}>{m.text}</div>
         <MiniBar current={m.current ?? 0} target={m.target} />
       </div>
 
@@ -227,7 +227,7 @@ export function MissionRow({ pid, mission: m, onToggle, onTally, onCompleteTally
           style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e' }}
         >✓</div>
       )}
-      <span className="text-[11px] font-semibold flex-shrink-0" style={{ color: '#f0b429' }}>+{m.xp.toLocaleString()} XP</span>
+      <span className="text-[11px] font-semibold flex-shrink-0" style={{ color: '#ffd166' }}>+{m.xp.toLocaleString()} XP</span>
     </div>
   )
 }
@@ -237,14 +237,14 @@ export function SharedMissionRow({ mission: m, onToggle }: { mission: SharedMiss
   return (
     <div className="flex items-start gap-2.5 py-1.5 border-t first:border-t-0" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
       <div className="mt-0.5"><Checkbox checked={m.done} onClick={() => onToggle(m.id)} color="green" /></div>
-      <span className={`flex-1 text-[13px] leading-snug ${m.done ? 'text-white/25 line-through' : 'text-white/80'}`}>
+      <span className={`flex-1 text-[13px] leading-snug ${m.done ? 'text-white/30 line-through' : 'text-white/90'}`}>
         {m.text}
         <span
           className="inline-flex text-[9px] font-bold uppercase tracking-[0.06em] rounded-[4px] px-1.5 py-0.5 ml-1.5 align-middle"
-          style={{ background: 'rgba(240,180,41,0.1)', color: '#f0b429', border: '1px solid rgba(240,180,41,0.2)' }}
+          style={{ background: 'rgba(240,180,41,0.1)', color: '#ffd166', border: '1px solid rgba(240,180,41,0.2)' }}
         >all pools</span>
       </span>
-      <span className="text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ color: '#f0b429' }}>+{m.xp} XP</span>
+      <span className="text-[11px] font-semibold flex-shrink-0 mt-0.5" style={{ color: '#ffd166' }}>+{m.xp} XP</span>
     </div>
   )
 }

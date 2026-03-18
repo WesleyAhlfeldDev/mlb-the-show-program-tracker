@@ -10,7 +10,18 @@ import { AllSection } from '@/components/AllSection'
 import { ProgramCard } from '@/components/ProgramCard'
 import { TeamGroup } from '@/components/TeamGroup'
 import { ImportModal } from '@/components/ImportModal'
-import type { ActiveTab, Program } from '@/types'
+import type { ActiveTab, Program, SharedMission } from '@/types'
+
+// ── Handlers type ─────────────────────────────────────────────────────────────
+type Handlers = {
+  onToggle: (pid: string, mid: string) => void
+  onTally: (pid: string, mid: string, delta: number) => void
+  onToggleShared: (mid: string) => void
+  onAutoComplete: (pid: string) => void
+  onCompleteTally: (pid: string, mid: string) => void
+  onTogglePin: (pid: string) => void
+  onDelete: (pid: string) => void
+}
 
 export default function Home() {
   const tracker = useTracker()
@@ -27,14 +38,17 @@ export default function Home() {
   if (!hydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#080c14' }}>
-        <div className="font-display text-[18px] uppercase tracking-widest animate-pulse" style={{ color: 'rgba(240,180,41,0.4)' }}>
+        <div
+          className="font-display text-[18px] uppercase tracking-widest animate-pulse"
+          style={{ color: 'rgba(240,200,100,0.6)' }}
+        >
           Loading…
         </div>
       </div>
     )
   }
 
-  const handlers = {
+  const handlers: Handlers = {
     onToggle: toggleCheck,
     onTally: tally,
     onToggleShared: toggleShared,
@@ -48,6 +62,7 @@ export default function Home() {
     if (tab !== 'all') setSearchQ('')
     setCat(tab)
   }
+
   const handleSearch = (v: string) => {
     setSearchQ(v)
     if (v) setCat('all')
@@ -85,11 +100,15 @@ export default function Home() {
             >
               MLB The Show 26 · Program Tracker
             </div>
-            <div className="text-[10px] uppercase tracking-[0.08em] mt-0.5" style={{ color: 'rgba(240,180,41,0.4)' }}>
+            <div
+              className="text-[10px] uppercase tracking-[0.08em] mt-0.5"
+              style={{ color: 'rgba(240,200,100,0.6)' }}
+            >
               Diamond Dynasty · All 30 Teams
             </div>
           </div>
         </div>
+
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowImport(true)}
@@ -117,15 +136,12 @@ export default function Home() {
       {/* ── Body ── */}
       <main className="max-w-[980px] mx-auto px-4 md:px-6 pb-20 pt-6">
 
-        {/* ── Device notice banner ── */}
+        {/* Device notice banner */}
         <div
           className="flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 mb-4 text-[12px]"
-          style={{
-            background: 'rgba(240,180,41,0.05)',
-            border: '1px solid rgba(240,180,41,0.12)',
-          }}
+          style={{ background: 'rgba(240,180,41,0.05)', border: '1px solid rgba(240,180,41,0.12)' }}
         >
-          <span style={{ color: 'rgba(240,180,41,0.7)' }}>
+          <span style={{ color: 'rgba(240,200,100,0.9)' }}>
             💾 Progress is saved on this device only.
           </span>
           <span
@@ -224,16 +240,6 @@ export default function Home() {
 }
 
 // ── Pinned tab view ───────────────────────────────────────────────────────────
-type Handlers = {
-  onToggle: (pid: string, mid: string) => void
-  onTally: (pid: string, mid: string, delta: number) => void
-  onToggleShared: (mid: string) => void
-  onAutoComplete: (pid: string) => void
-  onCompleteTally: (pid: string, mid: string) => void
-  onTogglePin: (pid: string) => void
-  onDelete: (pid: string) => void
-}
-
 function PinnedTab({
   allProgs, wbcIds, taIds, f1, shared, handlers,
 }: {
@@ -241,7 +247,7 @@ function PinnedTab({
   wbcIds: string[]
   taIds: string[]
   f1: Program[]
-  shared: import('@/types').SharedMission[]
+  shared: SharedMission[]
   handlers: Handlers
 }) {
   const pinned = allProgs.filter(p => p.pinned)

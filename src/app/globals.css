@@ -3,21 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --bg:    #080c14;
-  --bg2:   #0d1424;
-  --bg3:   #141d30;
-  --bg4:   #1c2840;
+  --bg:    #060a11;
+  --bg2:   #0d1525;
+  --bg3:   #162035;
+  --bg4:   #1e2d47;
   --gold:  #f0b429;
   --gold2: #ffd166;
   --gold3: #c8901a;
-  --navy:  #0d1424;
+  --navy:  #0d1525;
+  --text:  #e8edf8;
+  --text2: #a8b4cc;
+  --text3: #6b7e9e;
 }
 
 html { background: var(--bg); }
 
 body {
   background: var(--bg);
-  color: #e8edf8;
+  color: var(--text);
   min-height: 100vh;
 }
 
