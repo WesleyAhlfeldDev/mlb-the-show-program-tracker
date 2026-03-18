@@ -117,6 +117,25 @@ export default function Home() {
       {/* ── Body ── */}
       <main className="max-w-[980px] mx-auto px-4 md:px-6 pb-20 pt-6">
 
+        {/* ── Device notice banner ── */}
+        <div
+          className="flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 mb-4 text-[12px]"
+          style={{
+            background: 'rgba(240,180,41,0.05)',
+            border: '1px solid rgba(240,180,41,0.12)',
+          }}
+        >
+          <span style={{ color: 'rgba(240,180,41,0.7)' }}>
+            💾 Progress is saved on this device only.
+          </span>
+          <span
+            className="font-bold uppercase tracking-[0.06em] text-[10px] px-2 py-1 rounded-full flex-shrink-0"
+            style={{ background: 'rgba(240,180,41,0.1)', color: '#f0b429', border: '1px solid rgba(240,180,41,0.2)' }}
+          >
+            🔐 Login coming soon
+          </span>
+        </div>
+
         <TabBar active={activeTab} onChange={handleTabChange} pinnedCount={pinnedCount} />
 
         <SearchBar value={searchQ} onChange={handleSearch} />

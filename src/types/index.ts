@@ -26,6 +26,7 @@ export interface Program {
   tab: TabType
   sections: Section[]
   teamId?: string // for F1 programs linking to TA
+  pinned?: boolean
 }
 
 export interface SharedMission {
@@ -35,7 +36,7 @@ export interface SharedMission {
   done: boolean
 }
 
-export type ActiveTab = 'all' | 'wbc' | 'ta' | 'player' | 'other'
+export type ActiveTab = 'all' | 'wbc' | 'ta' | 'player' | 'other' | 'pinned'
 
 export interface TrackerState {
   wbc: Program[]
