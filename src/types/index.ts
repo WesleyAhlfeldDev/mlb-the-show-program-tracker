@@ -15,7 +15,7 @@ export interface Section {
   missions: Mission[]
 }
 
-export type TabType = 'wbc' | 'ta' | 'f1' | 'player' | 'other'
+export type TabType = string
 
 export interface Program {
   id: string
@@ -25,7 +25,7 @@ export interface Program {
   boss: string
   tab: TabType
   sections: Section[]
-  teamId?: string // for F1 programs linking to TA
+  teamId?: string
   pinned?: boolean
 }
 
@@ -36,7 +36,12 @@ export interface SharedMission {
   done: boolean
 }
 
-export type ActiveTab = 'all' | 'wbc' | 'ta' | 'player' | 'other' | 'pinned'
+export type ActiveTab = string
+
+export interface CustomTab {
+  id: string
+  label: string
+}
 
 export interface TrackerState {
   wbc: Program[]
@@ -45,6 +50,7 @@ export interface TrackerState {
   moonshot: Program[]
   player: Program[]
   other: Program[]
+  custom: Program[]
   shared: SharedMission[]
   cat: ActiveTab
 }

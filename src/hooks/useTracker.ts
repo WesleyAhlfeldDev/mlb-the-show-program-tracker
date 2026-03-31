@@ -20,6 +20,7 @@ function initState(): TrackerState {
     moonshot: [],
     player: deepClone(PLAYER_DEF),
     other: deepClone(OTHER_DEF),
+    custom: [],
     shared: deepClone(SHARED_MISSIONS_DEFAULT),
     cat: 'all',
   }
@@ -38,6 +39,7 @@ function loadState(): TrackerState {
       moonshot: d.moonshot ?? [],
       player: d.player?.length ? d.player : deepClone(PLAYER_DEF),
       other: d.other?.length ? d.other : deepClone(OTHER_DEF),
+      custom: d.custom ?? [],
       shared: d.shared?.length ? d.shared : deepClone(SHARED_MISSIONS_DEFAULT),
       cat: d.cat ?? 'all',
     }
@@ -55,29 +57,36 @@ function mergeCustomPrograms(state: TrackerState): TrackerState {
     const customs = JSON.parse(raw) as Program[]
     if (!customs.length) return state
 
-    const buckets: Record<string, Program[]> = {
+    const knownBuckets: Record<string, Program[]> = {
       wbc: [...state.wbc],
       ta: [...state.ta],
       f1: [...state.f1],
       player: [...state.player],
       other: [...state.other],
     }
+    const customBucket = [...state.custom]
 
     for (const p of customs) {
-      const bucket = buckets[p.tab]
-      if (!bucket) continue
-      if (!bucket.some(existing => existing.id === p.id)) {
-        bucket.push(p)
+      const bucket = knownBuckets[p.tab]
+      if (bucket) {
+        if (!bucket.some(existing => existing.id === p.id)) {
+          bucket.push(p)
+        }
+      } else {
+        if (!customBucket.some(existing => existing.id === p.id)) {
+          customBucket.push(p)
+        }
       }
     }
 
     return {
       ...state,
-      wbc: buckets.wbc,
-      ta: buckets.ta,
-      f1: buckets.f1,
-      player: buckets.player,
-      other: buckets.other,
+      wbc: knownBuckets.wbc,
+      ta: knownBuckets.ta,
+      f1: knownBuckets.f1,
+      player: knownBuckets.player,
+      other: knownBuckets.other,
+      custom: customBucket,
     }
   } catch {
     return state
@@ -122,6 +131,8 @@ function updateProgInState(s: TrackerState, pid: string, updater: (p: Program) =
     return { ...s, player: updateProgramInArray(s.player, pid, updater) }
   if (s.other.some(p => p.id === pid))
     return { ...s, other: updateProgramInArray(s.other, pid, updater) }
+  if (s.custom.some(p => p.id === pid))
+    return { ...s, custom: updateProgramInArray(s.custom, pid, updater) }
   return s
 }
 
@@ -194,7 +205,7 @@ export function useTracker() {
   }, [state, hydrated])
 
   const allPrograms = useCallback(() =>
-    [...state.wbc, ...state.ta, ...state.f1, ...state.moonshot, ...state.player, ...state.other],
+    [...state.wbc, ...state.ta, ...state.f1, ...state.moonshot, ...state.player, ...state.other, ...state.custom],
     [state]
   )
 
@@ -250,7 +261,6 @@ export function useTracker() {
     })
   }, [])
 
-  // Toggle pinned state
   const togglePin = useCallback((pid: string) => {
     setState(s =>
       updateProgInState(s, pid, p => ({ ...p, pinned: !p.pinned }))
@@ -265,6 +275,7 @@ export function useTracker() {
       f1: s.f1.filter(p => p.id !== pid),
       player: s.player.filter(p => p.id !== pid),
       other: s.other.filter(p => p.id !== pid),
+      custom: s.custom.filter(p => p.id !== pid),
     }))
   }, [])
 
@@ -286,6 +297,7 @@ export function useTracker() {
         f1: d.f1 ?? s.f1,
         player: d.player ?? s.player,
         other: d.other ?? s.other,
+        custom: d.custom ?? s.custom,
         shared: d.shared ?? s.shared,
       }))
       return { ok: true }
@@ -301,7 +313,7 @@ export function useTracker() {
       const { done: d, total: t } = missionCounts(p, state.shared)
       return { done: a.done + d, total: a.total + t }
     }, { done: 0, total: 0 })
-    const taMs = [...state.ta, ...state.f1, ...state.player, ...state.other].reduce((a, p) => {
+    const taMs = [...state.ta, ...state.f1, ...state.player, ...state.other, ...state.custom].reduce((a, p) => {
       const { done: d, total: t } = missionCounts(p, state.shared)
       return { done: a.done + d, total: a.total + t }
     }, { done: 0, total: 0 })

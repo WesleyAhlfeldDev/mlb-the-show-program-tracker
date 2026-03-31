@@ -1,7 +1,7 @@
 'use client'
-import type { ActiveTab } from '@/types'
+import type { ActiveTab, CustomTab } from '@/types'
 
-const TABS: { id: ActiveTab; label: string }[] = [
+export const BUILT_IN_TABS: { id: string; label: string }[] = [
   { id: 'all',    label: 'All' },
   { id: 'pinned', label: '📌 Pinned' },
   { id: 'wbc',    label: 'WBC' },
@@ -14,9 +14,20 @@ interface Props {
   active: ActiveTab
   onChange: (tab: ActiveTab) => void
   pinnedCount: number
+  customTabs?: CustomTab[]
+  tabOrder?: string[]
 }
 
-export function TabBar({ active, onChange, pinnedCount }: Props) {
+export function TabBar({ active, onChange, pinnedCount, customTabs = [], tabOrder }: Props) {
+  const allTabs = [...BUILT_IN_TABS, ...customTabs]
+
+  const tabs = tabOrder && tabOrder.length > 0
+    ? [
+        ...tabOrder.map(id => allTabs.find(t => t.id === id)).filter(Boolean) as { id: string; label: string }[],
+        ...allTabs.filter(t => !tabOrder.includes(t.id)),
+      ]
+    : allTabs
+
   return (
     <div className="sticky top-[58px] z-40 mb-4">
       <div
@@ -27,7 +38,7 @@ export function TabBar({ active, onChange, pinnedCount }: Props) {
           boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
         }}
       >
-        {TABS.map(t => {
+        {tabs.map(t => {
           const isActive = active === t.id
           const isPinnedTab = t.id === 'pinned'
           return (

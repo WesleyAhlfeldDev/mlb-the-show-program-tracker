@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useTracker, sortByCompletion } from '@/hooks/useTracker'
 import { useToast, ToastContainer } from '@/hooks/useToast'
 import { TabBar } from '@/components/TabBar'
@@ -10,7 +11,10 @@ import { AllSection } from '@/components/AllSection'
 import { ProgramCard } from '@/components/ProgramCard'
 import { TeamGroup } from '@/components/TeamGroup'
 import { ImportModal } from '@/components/ImportModal'
-import type { ActiveTab, Program, SharedMission } from '@/types'
+import type { ActiveTab, CustomTab, Program, SharedMission } from '@/types'
+
+const CUSTOM_TABS_KEY = 'mlb26_custom_tabs_v1'
+const TAB_ORDER_KEY = 'mlb26_tab_order_v1'
 
 // ── Handlers type ─────────────────────────────────────────────────────────────
 type Handlers = {
@@ -34,6 +38,19 @@ export default function Home() {
   const { toast, toasts } = useToast()
   const [searchQ, setSearchQ] = useState('')
   const [showImport, setShowImport] = useState(false)
+  const [customTabs, setCustomTabs] = useState<CustomTab[]>([])
+  const [tabOrder, setTabOrder] = useState<string[]>([])
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CUSTOM_TABS_KEY)
+      if (raw) setCustomTabs(JSON.parse(raw) as CustomTab[])
+    } catch { /* ignore */ }
+    try {
+      const raw = localStorage.getItem(TAB_ORDER_KEY)
+      if (raw) setTabOrder(JSON.parse(raw) as string[])
+    } catch { /* ignore */ }
+  }, [])
 
   if (!hydrated) {
     return (
@@ -69,8 +86,10 @@ export default function Home() {
   }
 
   const activeTab = state.cat
-  const allProgs = [...state.wbc, ...state.ta, ...state.f1, ...state.player, ...state.other]
+  const allProgs = [...state.wbc, ...state.ta, ...state.f1, ...state.player, ...state.other, ...state.custom]
   const pinnedCount = allProgs.filter(p => p.pinned).length
+
+  const isCustomTab = customTabs.some(t => t.id === activeTab)
 
   return (
     <>
@@ -110,6 +129,16 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/pxp"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold transition-all"
+            style={{ background: 'rgba(240,180,41,0.06)', border: '1px solid rgba(240,180,41,0.15)', color: 'rgba(240,180,41,0.7)', textDecoration: 'none' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.12)'; e.currentTarget.style.color = '#f0b429' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.06)'; e.currentTarget.style.color = 'rgba(240,180,41,0.7)' }}
+          >
+            <span>⚡</span>
+            <span className="hidden sm:inline">PXP Calc</span>
+          </Link>
           <button
             onClick={() => setShowImport(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-all"
@@ -152,7 +181,7 @@ export default function Home() {
           </span>
         </div>
 
-        <TabBar active={activeTab} onChange={handleTabChange} pinnedCount={pinnedCount} />
+        <TabBar active={activeTab} onChange={handleTabChange} pinnedCount={pinnedCount} customTabs={customTabs} tabOrder={tabOrder} />
 
         <SearchBar value={searchQ} onChange={handleSearch} />
 
@@ -218,6 +247,22 @@ export default function Home() {
               {sortByCompletion(state.other, state.shared).map(p => (
                 <ProgramCard key={p.id} program={p} shared={state.shared} {...handlers} />
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Custom tabs */}
+        {isCustomTab && !searchQ && (
+          <div>
+            <div className="flex flex-col gap-2">
+              {sortByCompletion(state.custom.filter(p => p.tab === activeTab), state.shared).map(p => (
+                <ProgramCard key={p.id} program={p} shared={state.shared} {...handlers} />
+              ))}
+              {state.custom.filter(p => p.tab === activeTab).length === 0 && (
+                <div className="text-center py-16" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                  No programs in this tab yet. Add some in the admin panel.
+                </div>
+              )}
             </div>
           </div>
         )}
