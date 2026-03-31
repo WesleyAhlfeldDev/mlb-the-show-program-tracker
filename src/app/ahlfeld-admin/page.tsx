@@ -438,10 +438,10 @@ export default function AdminPage() {
         boss: typeof p.boss === 'string' ? p.boss.trim() : '',
         tab: typeof p.tab === 'string' ? p.tab : 'other',
         pinned: false,
-        sections: (p.sections as Record<string, unknown>[]).map(sec => ({
+        sections: (p.sections as Record<string, unknown>[]).map((sec, si) => ({
           label: typeof sec.label === 'string' ? sec.label : '',
           missions: (Array.isArray(sec.missions) ? sec.missions as Record<string, unknown>[] : []).map((m, mi) => ({
-            id: `m-${pid}-${mi}`,
+            id: `m-${pid}-${si}-${mi}`,
             text: typeof m.text === 'string' ? m.text.trim() : '',
             xp: typeof m.xp === 'number' ? m.xp : 5,
             type: (['check', 'tally', 'rep'].includes(m.type as string) ? m.type : 'check') as MissionType,
