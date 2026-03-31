@@ -91,8 +91,8 @@ function mapApiPosition(p: string) { return p === 'CP' ? 'CL' : p }
 function isPitcherPos(p: string) { return PITCHER_API_POSITIONS.includes(p) }
 
 function getMultiplier(isOnline: boolean, difficulty: string) {
-  if (isOnline) return 1.5
-  return DIFFICULTIES.find(d => d.id === difficulty)?.mult ?? 1
+  const diffMult = DIFFICULTIES.find(d => d.id === difficulty)?.mult ?? 1
+  return isOnline ? +(diffMult * 1.5).toFixed(2) : diffMult
 }
 
 function getCurrentParallel(pxp: number) {
@@ -508,25 +508,25 @@ export default function PXPCalculatorPage() {
 
       {/* ── Game Settings (always visible) ── */}
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.01)' }}>
-        <div className="max-w-[600px] mx-auto px-3 md:px-4 py-2.5 flex items-center gap-4 flex-wrap">
-          <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0" style={{ color: 'rgba(240,180,41,0.5)' }}>Mode</span>
-          <div className="flex gap-1.5">
-            <button onClick={() => setState(s => ({ ...s, isOnline: false }))} style={chip(!state.isOnline)}>Offline</button>
-            <button onClick={() => setState(s => ({ ...s, isOnline: true }))}  style={chip(state.isOnline)}>Online ×1.5</button>
+        <div className="max-w-[600px] mx-auto px-3 md:px-4 py-2.5 flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0 w-16" style={{ color: 'rgba(240,180,41,0.5)' }}>Mode</span>
+            <div className="flex gap-1.5 flex-1">
+              <button onClick={() => setState(s => ({ ...s, isOnline: false }))} style={chip(!state.isOnline)}>Offline</button>
+              <button onClick={() => setState(s => ({ ...s, isOnline: true }))}  style={chip(state.isOnline)}>Online ×1.5</button>
+            </div>
+            <span className="text-[11px] font-black flex-shrink-0" style={{ color: '#ffd166' }}>×{multiplier}</span>
           </div>
-          {!state.isOnline && (
-            <>
-              <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0" style={{ color: 'rgba(240,180,41,0.5)' }}>Difficulty</span>
-              <div className="flex flex-wrap gap-1.5">
-                {DIFFICULTIES.map(d => (
-                  <button key={d.id} onClick={() => setState(s => ({ ...s, difficulty: d.id }))} style={chip(state.difficulty === d.id)}>
-                    {d.label} <span style={{ opacity: 0.6 }}>×{d.mult}</span>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-          <span className="ml-auto text-[11px] font-black" style={{ color: '#ffd166' }}>×{multiplier} active</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0 w-16" style={{ color: 'rgba(240,180,41,0.5)' }}>Difficulty</span>
+            <div className="flex flex-wrap gap-1.5">
+              {DIFFICULTIES.map(d => (
+                <button key={d.id} onClick={() => setState(s => ({ ...s, difficulty: d.id }))} style={chip(state.difficulty === d.id)}>
+                  {d.label} <span style={{ opacity: 0.6 }}>×{d.mult}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
