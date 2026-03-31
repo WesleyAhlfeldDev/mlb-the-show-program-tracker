@@ -46,7 +46,7 @@ export function TabBar({ active, onChange, pinnedCount, customTabs = [], tabOrde
               key={t.id}
               onClick={() => onChange(t.id)}
               className={[
-                'font-display font-bold text-[13px] uppercase tracking-[0.06em] whitespace-nowrap',
+                'font-display font-bold text-[13px] md:text-[15px] uppercase tracking-[0.06em] whitespace-nowrap',
                 'px-5 py-2 rounded-[6px] transition-all duration-200 flex-shrink-0 flex items-center gap-1.5',
                 isActive ? 'text-bg font-black' : 'text-white/40 hover:text-white/80 hover:bg-white/5',
               ].join(' ')}
@@ -58,7 +58,7 @@ export function TabBar({ active, onChange, pinnedCount, customTabs = [], tabOrde
               {t.label}
               {isPinnedTab && pinnedCount > 0 && (
                 <span
-                  className="text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none"
+                  className="text-[10px] md:text-[12px] font-black px-1.5 py-0.5 rounded-full leading-none"
                   style={isActive
                     ? { background: 'rgba(0,0,0,0.2)', color: '#080c14' }
                     : { background: 'rgba(240,180,41,0.2)', color: '#f0b429' }

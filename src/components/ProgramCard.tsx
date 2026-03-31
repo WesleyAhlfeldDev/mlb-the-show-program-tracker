@@ -72,12 +72,12 @@ export function ProgramCard({
             className="w-2.5 h-2.5 rounded-full flex-shrink-0"
             style={{ background: p.color, boxShadow: `0 0 8px ${p.color}90` }}
           />
-          <span className={`font-display font-bold text-[14px] uppercase tracking-[0.04em] flex-1 min-w-0 truncate ${done && !pinned ? 'text-white/40' : 'text-white'}`}>
+          <span className={`font-display font-bold text-[14px] md:text-[17px] uppercase tracking-[0.04em] flex-1 min-w-0 truncate ${done && !pinned ? 'text-white/40' : 'text-white'}`}>
             {p.name}
           </span>
           {pinned && (
             <span
-              className="text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] flex-shrink-0 hidden sm:inline"
+              className="text-[10px] md:text-[12px] font-bold px-1.5 py-0.5 rounded-[4px] flex-shrink-0 hidden sm:inline"
               style={{ background: 'rgba(240,180,41,0.15)', color: '#ffd166', border: '1px solid rgba(240,180,41,0.35)' }}
             >
               📌
@@ -91,10 +91,10 @@ export function ProgramCard({
 
         {/* Second row: category + mission count */}
         <div className="flex items-center gap-1.5 mt-1 ml-[18px]">
-          <span className="text-[12px] font-medium truncate flex-1 min-w-0" style={{ color: done ? 'rgba(200,215,235,0.3)' : 'rgba(200,215,235,0.6)' }}>
+          <span className="text-[12px] md:text-[14px] font-medium truncate flex-1 min-w-0" style={{ color: done ? 'rgba(200,215,235,0.3)' : 'rgba(200,215,235,0.6)' }}>
             {p.category}
           </span>
-          <span className="text-[11px] flex-shrink-0" style={{ color: 'rgba(200,215,235,0.4)' }}>
+          <span className="text-[11px] md:text-[13px] flex-shrink-0" style={{ color: 'rgba(200,215,235,0.4)' }}>
             {dn}/{tot}
           </span>
         </div>
@@ -120,7 +120,7 @@ export function ProgramCard({
             <button
               type="button"
               onClick={() => onAutoComplete(p.id)}
-              className="text-[12px] font-bold px-3 py-1.5 rounded-[6px] transition-all flex-shrink-0"
+              className="text-[12px] md:text-[14px] font-bold px-3 py-1.5 rounded-[6px] transition-all flex-shrink-0"
               style={{ background: 'rgba(240,180,41,0.12)', border: '1px solid rgba(240,180,41,0.35)', color: '#ffd166' }}
             >
               Complete
@@ -129,7 +129,7 @@ export function ProgramCard({
 
           {/* % badge */}
           <span
-            className="font-display text-[12px] font-bold px-2.5 py-1.5 rounded-full flex-shrink-0"
+            className="font-display text-[12px] md:text-[14px] font-bold px-2.5 py-1.5 rounded-full flex-shrink-0"
             style={done
               ? { background: 'rgba(34,197,94,0.15)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' }
               : { background: 'rgba(240,180,41,0.12)', color: '#ffd166', border: '1px solid rgba(240,180,41,0.3)' }
@@ -151,7 +151,7 @@ export function ProgramCard({
           {p.sections.map((sec, si) => (
             <div key={si}>
               <div
-                className={`text-[11px] font-bold uppercase tracking-[0.09em] py-3 ${si > 0 ? 'border-t mt-1' : 'pt-3'}`}
+                className={`text-[11px] md:text-[13px] font-bold uppercase tracking-[0.09em] py-3 ${si > 0 ? 'border-t mt-1' : 'pt-3'}`}
                 style={{ color: 'rgba(200,215,235,0.55)', borderColor: 'rgba(255,255,255,0.06)' }}
               >
                 {sec.label}
@@ -181,8 +181,8 @@ export function ProgramCard({
             >
               <div className="w-3 h-3 rotate-45 rounded-sm flex-shrink-0" style={{ background: p.color }} />
               <div className="min-w-0">
-                <div className="text-[10px] uppercase tracking-[0.07em] font-semibold" style={{ color: 'rgba(240,180,41,0.6)' }}>Reward card(s)</div>
-                <div className="text-[13px] font-semibold mt-0.5" style={{ color: '#e8edf8' }}>{p.boss}</div>
+                <div className="text-[10px] md:text-[12px] uppercase tracking-[0.07em] font-semibold" style={{ color: 'rgba(240,180,41,0.6)' }}>Reward card(s)</div>
+                <div className="text-[13px] md:text-[15px] font-semibold mt-0.5" style={{ color: '#e8edf8' }}>{p.boss}</div>
               </div>
             </div>
           )}
@@ -191,7 +191,7 @@ export function ProgramCard({
             <button
               type="button"
               onClick={() => onDelete(p.id)}
-              className="text-[11px] font-medium px-3 py-1.5 rounded-[6px] transition-colors"
+              className="text-[11px] md:text-[13px] font-medium px-3 py-1.5 rounded-[6px] transition-colors"
               style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(200,215,235,0.4)' }}
               onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = '#fca5a5'; e.currentTarget.style.borderColor = 'rgba(239,68,68,0.35)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(200,215,235,0.4)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}

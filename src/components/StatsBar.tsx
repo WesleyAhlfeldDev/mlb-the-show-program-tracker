@@ -34,7 +34,7 @@ export function StatsBar({ stats }: Props) {
             className="absolute -top-4 -right-4 w-16 h-16 rounded-full pointer-events-none"
             style={{ background: 'radial-gradient(circle, rgba(240,180,41,0.12) 0%, transparent 70%)' }}
           />
-          <div className="font-display text-[28px] font-black leading-none relative">
+          <div className="font-display text-[28px] md:text-[36px] font-black leading-none relative">
             <span style={{
               background: 'linear-gradient(135deg, #ffd166 0%, #f0b429 100%)',
               WebkitBackgroundClip: 'text',
@@ -44,10 +44,10 @@ export function StatsBar({ stats }: Props) {
               {c.num}
             </span>
             {c.acc !== null && (
-              <span className="text-white/25 text-[20px]">/{c.acc}</span>
+              <span className="text-white/25 text-[20px] md:text-[26px]">/{c.acc}</span>
             )}
           </div>
-          <div className="text-[11px] text-white/35 uppercase tracking-[0.07em] mt-1">{c.label}</div>
+          <div className="text-[11px] md:text-[13px] text-white/35 uppercase tracking-[0.07em] mt-1">{c.label}</div>
         </div>
       ))}
     </div>

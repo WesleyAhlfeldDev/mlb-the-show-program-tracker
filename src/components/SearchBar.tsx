@@ -16,7 +16,7 @@ export function SearchBar({ value, onChange }: Props) {
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder="Search programs, teams, missions…"
-        className="w-full rounded-xl text-white font-body text-[13px] pl-9 pr-9 py-2.5 outline-none placeholder:text-white/20 transition-all"
+        className="w-full rounded-xl text-white font-body text-[13px] md:text-[15px] pl-9 pr-9 py-2.5 md:py-3 outline-none placeholder:text-white/20 transition-all"
         style={{
           background: 'linear-gradient(135deg, #0d1424 0%, #141d30 100%)',
           border: value

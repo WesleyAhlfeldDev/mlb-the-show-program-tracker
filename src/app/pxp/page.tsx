@@ -132,8 +132,8 @@ const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V']
 
 function chip(active: boolean): React.CSSProperties {
   return active
-    ? { background: 'linear-gradient(135deg, #ffd166, #f0b429)', color: '#080c14', fontWeight: 800, fontSize: '11px', padding: '4px 9px', borderRadius: '5px', border: 'none', cursor: 'pointer' }
-    : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', fontWeight: 600, fontSize: '11px', padding: '4px 9px', borderRadius: '5px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }
+    ? { background: 'linear-gradient(135deg, #ffd166, #f0b429)', color: '#080c14', fontWeight: 800, fontSize: '13px', padding: '5px 11px', borderRadius: '5px', border: 'none', cursor: 'pointer' }
+    : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', fontWeight: 600, fontSize: '13px', padding: '5px 11px', borderRadius: '5px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }
 }
 
 // ── Card Accordion ────────────────────────────────────────────────────────────
@@ -206,20 +206,20 @@ function CardAccordion({
 
         {/* Name + badges */}
         <div className="flex-1 min-w-0">
-          <div className="font-bold text-[14px] truncate" style={{ color: open ? '#fff' : 'rgba(255,255,255,0.7)' }}>
+          <div className="font-bold text-[14px] md:text-[17px] truncate" style={{ color: open ? '#fff' : 'rgba(255,255,255,0.7)' }}>
             {card.playerName || 'Unnamed Card'}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-            {rar && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: rar.bg, color: rar.color, border: `1px solid ${rar.border}` }}>{card.cardRarity}</span>}
-            <span className="text-[9px]" style={{ color: isHitter ? '#4ade80' : '#60a5fa' }}>{card.position}</span>
-            {card.cardOvr && <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{card.cardOvr} OVR</span>}
+            {rar && <span className="text-[9px] md:text-[11px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: rar.bg, color: rar.color, border: `1px solid ${rar.border}` }}>{card.cardRarity}</span>}
+            <span className="text-[9px] md:text-[11px]" style={{ color: isHitter ? '#4ade80' : '#60a5fa' }}>{card.position}</span>
+            {card.cardOvr && <span className="text-[9px] md:text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{card.cardOvr} OVR</span>}
           </div>
         </div>
 
         {/* PXP summary */}
         <div className="text-right flex-shrink-0">
-          <div className="font-black tabular-nums text-[15px]" style={{ color: '#ffd166' }}>{card.currentPXP.toLocaleString()}</div>
-          <div className="text-[9px]" style={{ color: MOD_COLOR[modTier] }}>
+          <div className="font-black tabular-nums text-[15px] md:text-[18px]" style={{ color: '#ffd166' }}>{card.currentPXP.toLocaleString()}</div>
+          <div className="text-[9px] md:text-[11px]" style={{ color: MOD_COLOR[modTier] }}>
             {curPar > 0 ? `Par. ${ROMAN[curPar]} · ${MOD_LABEL[modTier]}` : 'No parallel'}
           </div>
         </div>
@@ -233,7 +233,7 @@ function CardAccordion({
 
           {/* Progress bar */}
           <div className="px-3 pt-3 pb-2">
-            <div className="flex justify-between text-[10px] mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <div className="flex justify-between text-[10px] md:text-[13px] mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
               <span className="font-bold tabular-nums" style={{ color: '#ffd166' }}>{card.currentPXP.toLocaleString()} PXP</span>
               {nextPar
                 ? <span>{(nextPar.threshold - card.currentPXP).toLocaleString()} to Par. {ROMAN[nextPar.level]}</span>
@@ -251,8 +251,8 @@ function CardAccordion({
                 const isCur   = curPar === p.level
                 return (
                   <div key={p.level} className="rounded-[5px] py-1 text-center" style={{ background: reached ? 'rgba(240,180,41,0.1)' : 'rgba(255,255,255,0.02)', border: `1px solid ${isCur ? 'rgba(240,180,41,0.5)' : reached ? 'rgba(240,180,41,0.18)' : 'rgba(255,255,255,0.05)'}` }}>
-                    <div className="text-[11px] font-black" style={{ color: reached ? '#f0b429' : 'rgba(255,255,255,0.18)' }}>{p.roman}</div>
-                    <div className="text-[8px] tabular-nums" style={{ color: reached ? 'rgba(240,180,41,0.55)' : 'rgba(255,255,255,0.12)' }}>{p.threshold >= 1000 ? `${p.threshold / 1000}K` : p.threshold}</div>
+                    <div className="text-[11px] md:text-[13px] font-black" style={{ color: reached ? '#f0b429' : 'rgba(255,255,255,0.18)' }}>{p.roman}</div>
+                    <div className="text-[8px] md:text-[11px] tabular-nums" style={{ color: reached ? 'rgba(240,180,41,0.55)' : 'rgba(255,255,255,0.12)' }}>{p.threshold >= 1000 ? `${p.threshold / 1000}K` : p.threshold}</div>
                   </div>
                 )
               })}
@@ -268,8 +268,8 @@ function CardAccordion({
                 const unlocked = card.currentPXP >= m.threshold
                 return (
                   <div key={m.tier} className="rounded-[5px] px-1.5 py-1.5 text-center" style={{ background: unlocked ? m.bg : 'rgba(255,255,255,0.02)', border: `1px solid ${unlocked ? m.borderColor : 'rgba(255,255,255,0.05)'}` }}>
-                    <div className="text-[9px] font-bold" style={{ color: unlocked ? m.textColor : 'rgba(255,255,255,0.2)' }}>{m.label}</div>
-                    <div className="text-[8px] mt-0.5" style={{ color: unlocked ? m.textColor : 'rgba(255,255,255,0.15)', opacity: unlocked ? 0.75 : 1 }}>
+                    <div className="text-[9px] md:text-[11px] font-bold" style={{ color: unlocked ? m.textColor : 'rgba(255,255,255,0.2)' }}>{m.label}</div>
+                    <div className="text-[8px] md:text-[11px] mt-0.5" style={{ color: unlocked ? m.textColor : 'rgba(255,255,255,0.15)', opacity: unlocked ? 0.75 : 1 }}>
                       {unlocked ? 'Unlocked' : `${(m.threshold - card.currentPXP).toLocaleString()} needed`}
                     </div>
                   </div>
@@ -283,17 +283,17 @@ function CardAccordion({
 
           {/* Set PXP */}
           <div className="px-3 py-2.5 flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-[0.07em]" style={{ color: 'rgba(240,180,41,0.5)' }}>Set PXP</span>
+            <span className="text-[10px] md:text-[13px] font-bold uppercase tracking-[0.07em]" style={{ color: 'rgba(240,180,41,0.5)' }}>Set PXP</span>
             <input
               type="number"
               value={card.pxpInput}
               onChange={e => onUpdate({ pxpInput: e.target.value })}
               onKeyDown={e => e.key === 'Enter' && applyPXP()}
               min={0} max={99999}
-              style={{ background: '#080c14', border: '1px solid rgba(240,180,41,0.2)', borderRadius: '5px', color: '#e8edf8', padding: '5px 8px', fontSize: '12px', outline: 'none', width: '110px' }}
+              style={{ background: '#080c14', border: '1px solid rgba(240,180,41,0.2)', borderRadius: '5px', color: '#e8edf8', padding: '5px 8px', fontSize: '14px', outline: 'none', width: '110px' }}
             />
             <button onClick={applyPXP} style={chip(false)}>Apply</button>
-            <button onClick={() => onUpdate({ currentPXP: 0, pxpInput: '0', log: [] })} style={{ background: 'rgba(239,68,68,0.07)', color: '#fca5a5', fontWeight: 600, fontSize: '11px', padding: '4px 9px', borderRadius: '5px', border: '1px solid rgba(239,68,68,0.18)', cursor: 'pointer' }}>
+            <button onClick={() => onUpdate({ currentPXP: 0, pxpInput: '0', log: [] })} style={{ background: 'rgba(239,68,68,0.07)', color: '#fca5a5', fontWeight: 600, fontSize: '13px', padding: '4px 9px', borderRadius: '5px', border: '1px solid rgba(239,68,68,0.18)', cursor: 'pointer' }}>
               Reset
             </button>
           </div>
@@ -303,7 +303,7 @@ function CardAccordion({
 
           {/* Stat buttons */}
           <div className="px-3 py-2.5">
-            <div className="text-[10px] font-bold uppercase tracking-[0.07em] mb-2" style={{ color: 'rgba(240,180,41,0.5)' }}>
+            <div className="text-[10px] md:text-[13px] font-bold uppercase tracking-[0.07em] mb-2" style={{ color: 'rgba(240,180,41,0.5)' }}>
               {isHitter ? '⚾ Hitter Stats' : '🥎 Pitcher Stats'} <span style={{ color: 'rgba(255,255,255,0.2)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>· ×{multiplier} applied</span>
             </div>
             <div className={`grid gap-1.5 ${isHitter ? 'grid-cols-3' : 'grid-cols-4'}`}>
@@ -320,10 +320,10 @@ function CardAccordion({
                     onMouseLeave={e => { const el = e.currentTarget; el.style.background = 'rgba(255,255,255,0.04)'; el.style.borderColor = 'rgba(255,255,255,0.08)' }}
                   >
                     <div className="flex items-center justify-between w-full mb-0.5">
-                      <span className="text-[9px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>{stat.short}</span>
-                      {count > 0 && <span className="text-[8px] font-black px-1 rounded-full" style={{ background: 'rgba(240,180,41,0.15)', color: '#f0b429' }}>×{count}</span>}
+                      <span className="text-[9px] md:text-[12px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>{stat.short}</span>
+                      {count > 0 && <span className="text-[8px] md:text-[11px] font-black px-1 rounded-full" style={{ background: 'rgba(240,180,41,0.15)', color: '#f0b429' }}>×{count}</span>}
                     </div>
-                    <div className="text-[18px] font-black tabular-nums leading-none" style={{ color: '#ffd166' }}>+{effective}</div>
+                    <div className="text-[18px] md:text-[23px] font-black tabular-nums leading-none" style={{ color: '#ffd166' }}>+{effective}</div>
                   </button>
                 )
               })}
@@ -331,14 +331,14 @@ function CardAccordion({
 
             {/* Position override */}
             <details className="mt-2">
-              <summary className="text-[9px] cursor-pointer select-none" style={{ color: 'rgba(255,255,255,0.2)' }}>Override position</summary>
+              <summary className="text-[9px] md:text-[12px] cursor-pointer select-none" style={{ color: 'rgba(255,255,255,0.2)' }}>Override position</summary>
               <div className="flex flex-col gap-1 mt-1.5">
                 <div className="flex flex-wrap items-center gap-1">
-                  <span className="text-[8px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Hitters</span>
+                  <span className="text-[8px] md:text-[11px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Hitters</span>
                   {HITTER_POSITIONS.map(pos => <button key={pos} onClick={() => onUpdate({ position: pos })} style={chip(card.position === pos)}>{pos}</button>)}
                 </div>
                 <div className="flex flex-wrap items-center gap-1">
-                  <span className="text-[8px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Pitchers</span>
+                  <span className="text-[8px] md:text-[11px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Pitchers</span>
                   {PITCHER_POSITIONS.map(pos => <button key={pos} onClick={() => onUpdate({ position: pos })} style={chip(card.position === pos)}>{pos}</button>)}
                 </div>
               </div>
@@ -351,16 +351,16 @@ function CardAccordion({
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)', margin: '0 12px' }} />
               <div className="px-3 py-2.5">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.07em]" style={{ color: 'rgba(240,180,41,0.5)' }}>
+                  <span className="text-[10px] md:text-[13px] font-bold uppercase tracking-[0.07em]" style={{ color: 'rgba(240,180,41,0.5)' }}>
                     Session Log <span style={{ color: '#ffd166', fontWeight: 800 }}>+{sessionTotal.toLocaleString()}</span>
                   </span>
-                  <button onClick={() => onUpdate({ log: [] })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.25)', fontSize: '10px', padding: 0 }}>Clear</button>
+                  <button onClick={() => onUpdate({ log: [] })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.25)', fontSize: '12px', padding: 0 }}>Clear</button>
                 </div>
                 <div className="flex flex-col gap-0.5 overflow-y-auto" style={{ maxHeight: '140px' }}>
                   {card.log.map((entry, i) => (
                     <div key={`${entry.ts}-${i}`} className="flex items-center justify-between px-2 py-1 rounded-[4px]" style={{ background: 'rgba(255,255,255,0.02)', borderLeft: '2px solid rgba(240,180,41,0.2)' }}>
-                      <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{entry.stat}</span>
-                      <span className="text-[11px] font-bold tabular-nums" style={{ color: '#ffd166' }}>+{entry.pxp}</span>
+                      <span className="text-[11px] md:text-[13px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{entry.stat}</span>
+                      <span className="text-[11px] md:text-[13px] font-bold tabular-nums" style={{ color: '#ffd166' }}>+{entry.pxp}</span>
                     </div>
                   ))}
                 </div>
@@ -372,7 +372,7 @@ function CardAccordion({
           <div className="px-3 pb-2.5 flex justify-end">
             <button
               onClick={onRemove}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', fontSize: '11px', padding: 0 }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', fontSize: '13px', padding: 0 }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#fca5a5' }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.2)' }}
             >
@@ -497,11 +497,11 @@ export default function PXPCalculatorPage() {
       >
         <div className="flex items-center gap-2">
           <div className="w-[14px] h-[14px] rotate-45 rounded-[2px]" style={{ background: 'linear-gradient(135deg, #ffd166, #f0b429)' }} />
-          <span className="font-display font-bold text-[15px] uppercase tracking-[0.04em]" style={{ background: 'linear-gradient(135deg, #ffd166, #f0b429)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+          <span className="font-display font-bold text-[15px] md:text-[19px] uppercase tracking-[0.04em]" style={{ background: 'linear-gradient(135deg, #ffd166, #f0b429)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
             PXP Calculator
           </span>
         </div>
-          <Link href="/" className="text-[11px] font-bold uppercase tracking-[0.06em] px-3 py-1.5 rounded-[6px]" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none' }}>
+          <Link href="/" className="text-[11px] md:text-[14px] font-bold uppercase tracking-[0.06em] px-3 py-1.5 rounded-[6px]" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none' }}>
             ← Tracker
           </Link>
       </header>
@@ -510,15 +510,15 @@ export default function PXPCalculatorPage() {
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.01)' }}>
         <div className="max-w-[600px] mx-auto px-3 md:px-4 py-2.5 flex flex-col gap-2">
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0 w-16" style={{ color: 'rgba(240,180,41,0.5)' }}>Mode</span>
+            <span className="text-[10px] md:text-[13px] font-bold uppercase tracking-[0.08em] flex-shrink-0 w-16" style={{ color: 'rgba(240,180,41,0.5)' }}>Mode</span>
             <div className="flex gap-1.5 flex-1">
               <button onClick={() => setState(s => ({ ...s, isOnline: false }))} style={chip(!state.isOnline)}>Offline</button>
               <button onClick={() => setState(s => ({ ...s, isOnline: true }))}  style={chip(state.isOnline)}>Online ×1.5</button>
             </div>
-            <span className="text-[11px] font-black flex-shrink-0" style={{ color: '#ffd166' }}>×{multiplier}</span>
+            <span className="text-[11px] md:text-[14px] font-black flex-shrink-0" style={{ color: '#ffd166' }}>×{multiplier}</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0 w-16" style={{ color: 'rgba(240,180,41,0.5)' }}>Difficulty</span>
+            <span className="text-[10px] md:text-[13px] font-bold uppercase tracking-[0.08em] flex-shrink-0 w-16" style={{ color: 'rgba(240,180,41,0.5)' }}>Difficulty</span>
             <div className="flex flex-wrap gap-1.5">
               {DIFFICULTIES.map(d => (
                 <button key={d.id} onClick={() => setState(s => ({ ...s, difficulty: d.id }))} style={chip(state.difficulty === d.id)}>
@@ -549,7 +549,7 @@ export default function PXPCalculatorPage() {
         {!showAddCard ? (
           <button
             onClick={() => setShowAddCard(true)}
-            className="w-full py-2.5 rounded-[10px] text-[12px] font-bold transition-all"
+            className="w-full py-2.5 rounded-[10px] text-[12px] md:text-[14px] font-bold transition-all"
             style={{ background: 'rgba(240,180,41,0.05)', border: '1px dashed rgba(240,180,41,0.2)', color: 'rgba(240,180,41,0.55)', cursor: 'pointer' }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,0.08)'; (e.currentTarget as HTMLElement).style.color = '#f0b429' }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,180,41,0.05)'; (e.currentTarget as HTMLElement).style.color = 'rgba(240,180,41,0.55)' }}
@@ -577,10 +577,10 @@ export default function PXPCalculatorPage() {
 
                 {showDropdown && (
                   <div className="absolute left-0 right-0 z-50 mt-1 rounded-[8px] overflow-hidden" style={{ background: '#0d1424', border: '1px solid rgba(240,180,41,0.2)', boxShadow: '0 8px 32px rgba(0,0,0,0.7)', maxHeight: '260px', overflowY: 'auto' }}>
-                    {isSearching && <div className="px-3 py-2.5 text-[11px] text-center" style={{ color: 'rgba(255,255,255,0.35)' }}>Searching…</div>}
-                    {!isSearching && searchError && <div className="px-3 py-2.5 text-[11px]" style={{ color: '#fca5a5' }}>{searchError}</div>}
+                    {isSearching && <div className="px-3 py-2.5 text-[11px] md:text-[13px] text-center" style={{ color: 'rgba(255,255,255,0.35)' }}>Searching…</div>}
+                    {!isSearching && searchError && <div className="px-3 py-2.5 text-[11px] md:text-[13px]" style={{ color: '#fca5a5' }}>{searchError}</div>}
                     {!isSearching && !searchError && searchResults.length === 0 && searchQuery.length >= 2 && (
-                      <div className="px-3 py-2.5 text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>No cards found for &ldquo;{searchQuery}&rdquo;</div>
+                      <div className="px-3 py-2.5 text-[11px] md:text-[13px]" style={{ color: 'rgba(255,255,255,0.3)' }}>No cards found for &ldquo;{searchQuery}&rdquo;</div>
                     )}
                     {searchResults.map(card => {
                       const rs = rarityStyle(card.rarity)
@@ -599,11 +599,11 @@ export default function PXPCalculatorPage() {
                             <img src={card.img} alt={card.name} style={{ width: '34px', height: '34px', objectFit: 'contain', flexShrink: 0, borderRadius: '4px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                           )}
                           <div className="flex-1 min-w-0">
-                            <div className="text-[12px] font-bold text-white truncate">{card.name}</div>
+                            <div className="text-[12px] md:text-[14px] font-bold text-white truncate">{card.name}</div>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: rs.bg, color: rs.color, border: `1px solid ${rs.border}` }}>{card.rarity}</span>
-                              <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{card.ovr} OVR · {card.display_position}</span>
-                              {card.team && <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.25)' }}>{card.team}</span>}
+                              <span className="text-[9px] md:text-[11px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: rs.bg, color: rs.color, border: `1px solid ${rs.border}` }}>{card.rarity}</span>
+                              <span className="text-[9px] md:text-[11px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{card.ovr} OVR · {card.display_position}</span>
+                              {card.team && <span className="text-[9px] md:text-[11px]" style={{ color: 'rgba(255,255,255,0.25)' }}>{card.team}</span>}
                             </div>
                           </div>
                           {alreadyAdded && <span className="text-[9px] font-bold px-1.5 py-1 rounded-full flex-shrink-0" style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.2)' }}>Tracking</span>}
@@ -632,14 +632,14 @@ export default function PXPCalculatorPage() {
                   autoFocus
                 />
                 <div>
-                  <div className="text-[10px] font-bold uppercase tracking-[0.08em] mb-1.5" style={{ color: 'rgba(240,180,41,0.55)' }}>Position</div>
+                  <div className="text-[10px] md:text-[13px] font-bold uppercase tracking-[0.08em] mb-1.5" style={{ color: 'rgba(240,180,41,0.55)' }}>Position</div>
                   <div className="flex flex-col gap-1">
                     <div className="flex flex-wrap gap-1">
-                      <span className="text-[8px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Hitters</span>
+                      <span className="text-[8px] md:text-[11px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Hitters</span>
                       {HITTER_POSITIONS.map(pos => <button key={pos} onClick={() => setPendingCard(p => ({ ...p, position: pos }))} style={chip((pendingCard.position ?? 'RF') === pos)}>{pos}</button>)}
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      <span className="text-[8px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Pitchers</span>
+                      <span className="text-[8px] md:text-[11px] font-bold uppercase flex-shrink-0 self-center" style={{ color: 'rgba(255,255,255,0.2)', minWidth: '42px' }}>Pitchers</span>
                       {PITCHER_POSITIONS.map(pos => <button key={pos} onClick={() => setPendingCard(p => ({ ...p, position: pos }))} style={chip((pendingCard.position ?? 'RF') === pos)}>{pos}</button>)}
                     </div>
                   </div>

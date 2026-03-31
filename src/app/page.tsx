@@ -109,7 +109,7 @@ export default function Home() {
           />
           <div>
             <div
-              className="font-display font-bold text-[17px] uppercase tracking-[0.03em] leading-none"
+              className="font-display font-bold text-[17px] md:text-[22px] uppercase tracking-[0.03em] leading-none"
               style={{
                 background: 'linear-gradient(135deg, #ffd166 0%, #f0b429 60%, #c8901a 100%)',
                 WebkitBackgroundClip: 'text',
@@ -120,7 +120,7 @@ export default function Home() {
               MLB The Show 26 · Program Tracker
             </div>
             <div
-              className="text-[10px] uppercase tracking-[0.08em] mt-0.5"
+              className="text-[10px] md:text-[12px] uppercase tracking-[0.08em] mt-0.5"
               style={{ color: 'rgba(240,200,100,0.6)' }}
             >
               Diamond Dynasty · All 30 Teams
@@ -131,7 +131,7 @@ export default function Home() {
         <div className="flex items-center gap-2">
           <Link
             href="/pxp"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] md:text-[14px] font-bold transition-all"
             style={{ background: 'rgba(240,180,41,0.06)', border: '1px solid rgba(240,180,41,0.15)', color: 'rgba(240,180,41,0.7)', textDecoration: 'none' }}
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.12)'; e.currentTarget.style.color = '#f0b429' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.06)'; e.currentTarget.style.color = 'rgba(240,180,41,0.7)' }}
@@ -141,7 +141,7 @@ export default function Home() {
           </Link>
           <button
             onClick={() => setShowImport(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] md:text-[14px] font-medium transition-all"
             style={{ background: 'rgba(240,180,41,0.06)', border: '1px solid rgba(240,180,41,0.15)', color: 'rgba(240,180,41,0.7)' }}
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.12)'; e.currentTarget.style.color = '#f0b429' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(240,180,41,0.06)'; e.currentTarget.style.color = 'rgba(240,180,41,0.7)' }}
