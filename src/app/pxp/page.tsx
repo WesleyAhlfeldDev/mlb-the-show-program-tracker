@@ -394,7 +394,6 @@ export default function PXPCalculatorPage() {
   const [showAddCard, setShowAddCard] = useState(false)
   const [manualMode, setManualMode]   = useState(false)
   const [pendingCard, setPendingCard] = useState<Partial<CardEntry>>({ position: 'RF' })
-  const [showSettings, setShowSettings] = useState(false)
 
   const [searchQuery, setSearchQuery]     = useState('')
   const [searchResults, setSearchResults] = useState<CardResult[]>([])
@@ -486,8 +485,7 @@ export default function PXPCalculatorPage() {
 
   if (!mounted) return null
 
-  const multiplier  = getMultiplier(state.isOnline, state.difficulty)
-  const diffLabel   = DIFFICULTIES.find(d => d.id === state.difficulty)?.label ?? ''
+  const multiplier = getMultiplier(state.isOnline, state.difficulty)
 
   return (
     <div className="min-h-screen pb-20" style={{ background: '#080c14' }}>
@@ -503,48 +501,34 @@ export default function PXPCalculatorPage() {
             PXP Calculator
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowSettings(v => !v)}
-            className="text-[11px] font-bold px-2.5 py-1.5 rounded-[6px]"
-            style={{ background: showSettings ? 'rgba(240,180,41,0.12)' : 'rgba(255,255,255,0.04)', color: showSettings ? '#f0b429' : 'rgba(255,255,255,0.4)', border: `1px solid ${showSettings ? 'rgba(240,180,41,0.25)' : 'rgba(255,255,255,0.08)'}`, cursor: 'pointer' }}
-          >
-            ⚙ {state.isOnline ? 'Online' : diffLabel} ×{multiplier}
-          </button>
           <Link href="/" className="text-[11px] font-bold uppercase tracking-[0.06em] px-3 py-1.5 rounded-[6px]" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none' }}>
             ← Tracker
           </Link>
-        </div>
       </header>
 
-      {/* ── Settings dropdown ── */}
-      {showSettings && (
-        <div className="max-w-[600px] mx-auto px-3 md:px-4 pt-3">
-          <div style={{ background: 'linear-gradient(135deg, #0d1424, #141d30)', border: '1px solid rgba(240,180,41,0.2)', borderRadius: '10px', padding: '14px 16px' }}>
-            <div className="flex flex-col gap-3">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.08em] mb-2" style={{ color: 'rgba(240,180,41,0.55)' }}>Mode</div>
-                <div className="flex gap-1.5">
-                  <button onClick={() => setState(s => ({ ...s, isOnline: false }))} style={chip(!state.isOnline)}>Offline</button>
-                  <button onClick={() => setState(s => ({ ...s, isOnline: true }))}  style={chip(state.isOnline)}>Online ×1.5</button>
-                </div>
-              </div>
-              {!state.isOnline && (
-                <div>
-                  <div className="text-[10px] font-bold uppercase tracking-[0.08em] mb-2" style={{ color: 'rgba(240,180,41,0.55)' }}>Difficulty</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {DIFFICULTIES.map(d => (
-                      <button key={d.id} onClick={() => setState(s => ({ ...s, difficulty: d.id }))} style={chip(state.difficulty === d.id)}>
-                        {d.label} <span style={{ opacity: 0.6 }}>×{d.mult}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+      {/* ── Game Settings (always visible) ── */}
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.01)' }}>
+        <div className="max-w-[600px] mx-auto px-3 md:px-4 py-2.5 flex items-center gap-4 flex-wrap">
+          <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0" style={{ color: 'rgba(240,180,41,0.5)' }}>Mode</span>
+          <div className="flex gap-1.5">
+            <button onClick={() => setState(s => ({ ...s, isOnline: false }))} style={chip(!state.isOnline)}>Offline</button>
+            <button onClick={() => setState(s => ({ ...s, isOnline: true }))}  style={chip(state.isOnline)}>Online ×1.5</button>
           </div>
+          {!state.isOnline && (
+            <>
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] flex-shrink-0" style={{ color: 'rgba(240,180,41,0.5)' }}>Difficulty</span>
+              <div className="flex flex-wrap gap-1.5">
+                {DIFFICULTIES.map(d => (
+                  <button key={d.id} onClick={() => setState(s => ({ ...s, difficulty: d.id }))} style={chip(state.difficulty === d.id)}>
+                    {d.label} <span style={{ opacity: 0.6 }}>×{d.mult}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          <span className="ml-auto text-[11px] font-black" style={{ color: '#ffd166' }}>×{multiplier} active</span>
         </div>
-      )}
+      </div>
 
       <main className="max-w-[600px] mx-auto px-3 md:px-4 pt-3 flex flex-col gap-2">
 
